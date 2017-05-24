@@ -1,0 +1,24 @@
+INSTALLATION
+
+Standard installation using C++ compiler (better integration
+with C++ programs such as ROOT or GEANA) and building the libraries
+within the same folder (compatible with tools/bash/load.sh) by
+executing the following commands in the adl4 directory:
+
+  ./configure CC=c++ --prefix=$PWD
+  make
+  make install
+
+-------------------------------------------------------------------
+
+ENVIROMENTAL VARIABLES (NECESSARY FOR EXAMPLES)
+
+To load the necessary enviromental variable in a new shell:
+
+  tools/bash/load.sh
+
+To load the necessary enviromental variables in the current shell:
+
+  source tools/bash/load.sh
+
+------------------------------------------------------------------

@@ -1,0 +1,11 @@
+PaViewer.py
+
+This program shows Potential Arrays. It uses SIMION's PA.py python module, matplotlib and gtk. 
+In order to run it you need
+- python
+- matplotlib
+- gtk / pygtk
+The program was developed using glade.
+
+
+bene@ikp.uni-koeln.de
