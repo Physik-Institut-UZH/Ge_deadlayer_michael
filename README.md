@@ -43,3 +43,5 @@ pulsePlotter -f FILE.txt -c
 
 The same also works for a bege and coaxial detector, by replacing 'ICOAX' with
 'COAX' or 'Bege'.
+
+For a more advanced example: https://github.com/Kermaidy/ADL_exercise.git
