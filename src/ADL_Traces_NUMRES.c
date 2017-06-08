@@ -14,12 +14,12 @@
 #include <stdlib.h>
 
 //Globals influencing the integration routines:
-double  ADL_G_NUMRES_EPS    = 1.0e-6;    //(routine RKQS) error tolerance for integration
-int ADL_G_NUMRES_MAXSTP     = 10000;     //(routine odeint) maximum integration steps between 2 samples
-double  ADL_G_NUMRES_TINY   = 1.0e-6;    //(routine odeint) small position difference [cm]
-double  ADL_G_NUMRES_DTMIN  = 0.0;       //(routine odeint) minimum stepsize to take [us]
-double  ADL_G_NUMRES_DT0    = 0.001;     //(routine odeint) first stepsize to try [us]
-double  ADL_G_NUMRES_DIFF   = 0.;        // initial charge cloud size [mm]
+double  ADL_G_NUMRES_EPS        = 1.0e-6;    //(routine RKQS) error tolerance for integration
+int ADL_G_NUMRES_MAXSTP         = 10000;     //(routine odeint) maximum integration steps between 2 samples
+double  ADL_G_NUMRES_TINY       = 1.0e-6;    //(routine odeint) small position difference [cm]
+double  ADL_G_NUMRES_DTMIN      = 0.0;       //(routine odeint) minimum stepsize to take [us]
+double  ADL_G_NUMRES_DT0        = 0.001;     //(routine odeint) first stepsize to try [us]
+double  ADL_G_NUMRES_CLOUD_RMS  = 0.;        // initial charge cloud size [mm]
 
 //++++++++++++++++++++++++++++++++++++++++++
 // LIBRARY SETUP FUNCTION				
@@ -33,6 +33,7 @@ int InitializeTracesNumres(){
     return 0;
 }
 
+double GetCloudRMS(){return ADL_G_NUMRES_CLOUD_RMS;}
 double** GetNUMRES_XYZe(){return ADL_G_NUMRES_XYZe;}
 double** GetNUMRES_XYZh(){return ADL_G_NUMRES_XYZh;}
 
@@ -87,8 +88,8 @@ int ADL_Setup_TRACES_NUMRES(char *filename_setupfile){
 	sscanf(Kwords[2+i]->svalue,"%lf",&ADL_G_NUMRES_DTMIN);
       if (strcmp(Kwords[2+i]->keyword,"ADL_G_NUMRES_DT0")==0)
     sscanf(Kwords[2+i]->svalue,"%lf",&ADL_G_NUMRES_DT0);
-      if (strcmp(Kwords[2+i]->keyword,"ADL_G_NUMRES_DIFF")==0)
-    sscanf(Kwords[2+i]->svalue,"%lf",&ADL_G_NUMRES_DIFF);
+      if (strcmp(Kwords[2+i]->keyword,"ADL_G_NUMRES_CLOUD_RMS")==0)
+    sscanf(Kwords[2+i]->svalue,"%lf",&ADL_G_NUMRES_CLOUD_RMS);
     }
     free(Kwords);
   }
@@ -111,12 +112,12 @@ int ADL_Status_TRACES_NUMRES(void){
   //print final values that are setup:
   printf("\nStatus TRACES NUMRES:\n");
   printf("---------------------\n");
-  printf("ADL_G_NUMRES_EPS    = %lf\n",ADL_G_NUMRES_EPS);
-  printf("ADL_G_NUMRES_MAXSTP = %d\n", ADL_G_NUMRES_MAXSTP);
-  printf("ADL_G_NUMRES_TINY   = %lf\n",ADL_G_NUMRES_TINY);
-  printf("ADL_G_NUMRES_DTMIN  = %lf\n",ADL_G_NUMRES_DTMIN);
-  printf("ADL_G_NUMRES_DT0    = %lf\n",ADL_G_NUMRES_DT0);
-  printf("ADL_G_NUMRES_DIFF   = %lf\n",ADL_G_NUMRES_DIFF);
+  printf("ADL_G_NUMRES_EPS          = %lf\n",ADL_G_NUMRES_EPS);
+  printf("ADL_G_NUMRES_MAXSTP       = %d\n", ADL_G_NUMRES_MAXSTP);
+  printf("ADL_G_NUMRES_TINY         = %lf\n",ADL_G_NUMRES_TINY);
+  printf("ADL_G_NUMRES_DTMIN        = %lf\n",ADL_G_NUMRES_DTMIN);
+  printf("ADL_G_NUMRES_DT0          = %lf\n",ADL_G_NUMRES_DT0);
+  printf("ADL_G_NUMRES_CLOUD_RMS    = %lf\n",ADL_G_NUMRES_CLOUD_RMS);
   printf("Depends on: EVENT, FIELDS, DRIFT, CONVL\n");
   if ((ADL_G_NUMRES_XYZe == NULL) || (ADL_G_NUMRES_XYZh == NULL))
     printf("WARNING: ADL_G_NUMRES_XYZe,h requires setup!!!\n");
@@ -193,13 +194,35 @@ int ADL_CalculateTraces_NUMRES(struct ADL_EVENT *evnt)
 	//this routine needs the T0, Eint and Pos part of evnt filled in
 	//and needs some allocated memory Ye(electron path),Yh(hole path)
 	//on exit, the fields Eseg and Tr of evnt are given back.
-	{
-	static int i,j,k,errormsg = 0;
 
-	//initialize Traces to 0.0
-	for (j=0; j<GetNSEG(); j++)
-		for (k=0; k<=GetDIMT(); k++)
-			evnt->TD.Tr[j][k] = 0.0;
+    //it includes e-/holes cloud diffusion if the initial cloud extension (ADL_G_NUMRES_CLOUD_RMS) is not null
+	{
+        static int i,j,k,errormsg = 0;
+        
+        // Define varible needed for including the charge cloud diffusion
+        int Ncloud = 6;                             // Number of cloud discretization
+        
+        double gridsize = GetSimionGridSize();      //predefined variable for the gridsize used
+        double center = GetSimionCenter();
+        double D = 100;                             // cm2/s Diffusion coefficient of charge carriers in Ge
+        double t = 0;                               // s     Time since the energy deposition
+        
+        double xhCloud[Ncloud];                     // cm radial cloud extension
+        double zhCloud[Ncloud];                     // cm longitudinal cloud extension
+        double xCloudWeight[Ncloud];                // -  radial cloud density extension
+        double zCloudWeight[Ncloud];                // -  longitudinal cloud density extension
+        double CloudSum = 0;                        // -  total charge induction of the cloud
+        double CloudNorm;                           // -  normalize cloud densities to 1.
+        double hCloudCenter[4];
+        double eCloudCenter[4];
+        
+        double hCloudCenterRMS0 = GetCloudRMS();    // cm initial cloud RMS
+        double hCloudCenterRMS;                     // cm time dependant cloud RMS (propto sqrt(t))
+        
+        //initialize Traces to 0.0
+        for (j=0; j<GetNSEG(); j++)
+            for (k=0; k<=GetDIMT(); k++)
+                evnt->TD.Tr[j][k] = 0.0;
 
         //For all interactions ...
         for (i=0; i<GetNINT(); i++){
@@ -215,12 +238,65 @@ int ADL_CalculateTraces_NUMRES(struct ADL_EVENT *evnt)
                     if (ADL_CalculatePath_NUMRES(ADL_G_NUMRES_XYZh,&(evnt->HP.Pos[i][0]),GetDIMT(),ADL_G_NUMRES_DT0,evnt->HP.T0,ADL_HoleVelocity)) return 1;
                     //calculate the induced charge in segment j:
                     for (j=0; j<GetNSEG(); j++)
-                        for (k=0; k<=GetDIMT(); k++)
-                            evnt->TD.Tr[j][k] += (evnt->HP.Eint[i])*(GetWeight(j,ADL_G_NUMRES_XYZh[k])-GetWeight(j,ADL_G_NUMRES_XYZe[k]));
-                    //preamp sign has to be taken into account by inverting the ADL_G_TRACES_NUMRES_Weightingfields or responses
+                        for (k=0; k<=GetDIMT(); k++){
+                            if(!hCloudCenterRMS0) evnt->TD.Tr[j][k] += (evnt->HP.Eint[i])*(GetWeight(j,ADL_G_NUMRES_XYZh[k])-GetWeight(j,ADL_G_NUMRES_XYZe[k]));
+                            else if(k>100){
+                                // If holes did not reach the p-contact yet -> compute cloud contribution
+                                if(ADL_G_NUMRES_XYZh[k][3] > gridsize){
+                                	t += 10e-9;
+                                	CloudSum = 0;
+                                	CloudNorm = 0;
+
+                                    // Initialize hole cloud position in 2D plane (x,y,z) -> (r,z)
+	                                hCloudCenter[0] = ADL_G_NUMRES_XYZh[k][0];
+    	                            hCloudCenter[2] = center;
+                                
+                                    // Initialize hole cloud position in 2D plane (x,y,z) -> (r,z)
+        	                        eCloudCenter[0] = ADL_G_NUMRES_XYZe[k][0];
+            	                    eCloudCenter[2] = center;
+                                
+                	                // Calculate cloud RMS time dependance
+                    	            hCloudCenterRMS = hCloudCenterRMS0 + sqrt(2.*D*t);
+                                
+                        	        // Calculate the Cloud density distribution
+                            	    for(int lx=0;lx<=Ncloud;lx++){
+                                	    xhCloud[lx] = 4.*double(lx-Ncloud/2)*hCloudCenterRMS/double(Ncloud);
+                                    	xCloudWeight[lx] = 1./(4.*pow(3.14159*D*t,1)) * exp(-(pow(xhCloud[lx],2))/(2.*pow(hCloudCenterRMS,2)));
+                                    
+                                    	for(int lz=0;lz<=Ncloud;lz++){
+                                        	zhCloud[lz] = 4.*double(lz-Ncloud/2)*hCloudCenterRMS/double(Ncloud);
+                                        	zCloudWeight[lz] = 1./(2.*pow(3.14159*D*t,1/2)) * exp(-(pow(zhCloud[lz],2))/(2.*pow(hCloudCenterRMS,2)));
+
+                                        	CloudNorm += xCloudWeight[lx]*zCloudWeight[lz];
+                                    	}
+                                	}
+                                
+                                    // Scan radial 2D cloud distribution
+                                    for(int lx=0;lx<=Ncloud;lx++){
+
+                                        // Move e-/hole cloud position in 2D plane (x,y,z) -> (r,z)
+                                        hCloudCenter[1] = sqrt(pow(ADL_G_NUMRES_XYZh[k][1]-center,2) + pow(ADL_G_NUMRES_XYZh[k][2]-center,2)) + center + xhCloud[lx];
+                                    	eCloudCenter[1] = sqrt(pow(ADL_G_NUMRES_XYZe[k][1]-center,2) + pow(ADL_G_NUMRES_XYZe[k][2]-center,2)) + center + xhCloud[lx];
+                                    
+                                    	// Scan longitudinal cloud distribution
+                                    	for(int lz=0;lz<=Ncloud;lz++){
+                                  
+                                        	hCloudCenter[3] = ADL_G_NUMRES_XYZh[k][3] + zhCloud[lz];
+                                        	eCloudCenter[3] = ADL_G_NUMRES_XYZe[k][3] + zhCloud[lz];
+                                        
+                                            CloudSum += zCloudWeight[lz]*xCloudWeight[lx]/CloudNorm * GetWeight(j,hCloudCenter);
+                                            if(IsInDetector(ADL_G_NUMRES_XYZe[k])) CloudSum -= zCloudWeight[lz]*xCloudWeight[lx]/CloudNorm * GetWeight(j,eCloudCenter);
+                                    	}
+                                	}
+                                }
+                                evnt->TD.Tr[j][k] += (evnt->HP.Eint[i])*CloudSum;
+                            }
+                            else evnt->TD.Tr[j][k] = 0;
+                        }
+                    }
                 }
             }
-        }
+        
 
     ApplyConvolution(&(evnt->TD));
 	

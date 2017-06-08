@@ -25,6 +25,7 @@ static double     ADL_G_EVENT_DeltaT; //[us]:Sampling interval to store traces T
 
 int SetupEvent(char*,char*);
 
+void SetNINT(int);
 int GetNINT();
 int GetNSEG();
 int GetDIMT();

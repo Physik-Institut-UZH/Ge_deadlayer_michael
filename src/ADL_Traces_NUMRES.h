@@ -24,6 +24,7 @@
 
 int InitializeTracesNumres();
 
+double GetCloudRMS();
 double** GetNUMRES_XYZe();
 double** GetNUMRES_XYZh();
 

@@ -10,4 +10,4 @@ ADL_G_NUMRES_MAXSTP	100000	!(routine odeint) maximum integration steps between 2
 ADL_G_NUMRES_TINY	1e-5	!(routine odeint) small position difference [cm]
 ADL_G_NUMRES_DTMIN 	0.0	!(routine odeint) minimum stepsize to take [us]
 ADL_G_NUMRES_DT0	1e-4    !(routine odeint) first stepsize to try [us]
-ADL_G_NUMRES_DIFF       0.001   ! initial charge cloud size [cm]
+ADL_G_NUMRES_CLOUD_RMS  0.000   ! initial charge cloud size [cm]

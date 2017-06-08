@@ -14,6 +14,7 @@
 //**********************************
 //List of global defined parameters:
 
+void SetNINT(int NINT){ADL_G_EVENT_NINT = NINT;}
 int GetNINT(){return ADL_G_EVENT_NINT;}
 int GetNSEG(){return ADL_G_EVENT_NSEG;}
 int GetDIMT(){return ADL_G_EVENT_DIMT;}

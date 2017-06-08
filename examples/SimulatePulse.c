@@ -1,4 +1,5 @@
 #include "ADL.h"
+#include <time.h>
 
 int SimulateDetector(char buffer[100],double Px, double Pz, int i)
 {
@@ -32,13 +33,14 @@ int SimulateDetector(char buffer[100],double Px, double Pz, int i)
     //On basis of the HP, here the traces are generated
     //Traces are stored in the Trace Data (TD) part of the event:
     
-    printf("Status traces \n");
+//    printf("Status traces \n");
     //StatusTraces(evt);
-    printf("Calculate traces \n");
+//    printf("Calculate traces \n");
     CalculateTraces(evt);
-    printf("Print traces \n");
+//    printf("Print traces \n");
     
     //print traces
+    
     FILE *output;
     char outfilename[100];
      
@@ -66,16 +68,25 @@ int main (int argc, char **argv) {
 	if(argc<2){printf("Not enough path to SETUP file indicated.\n"); return 1;};
     sprintf(setupfile, "%s", argv[1]);
 
-    Px = 2;
-    Pz = 2;
+    Px = 0.5;
+    Pz = 6;
     
     int Niter = 1;
     
+    clock_t start, end;
+    double cpu_time_used;
+    
+    start = clock();
+    
     for(int i = 0;i<Niter;i++){
-        if(SimulateDetector(setupfile,Px,Pz,i)==0) printf("Setup file : %s \t %i event \n",setupfile,i);
+        if(SimulateDetector(setupfile,Px,Pz,i)==1) return 1;
+            //printf("Setup file : %s \t %i event \n",setupfile,i);
     }
-        
-    printf("\n Simulation ended normally \n");
+    
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    
+    printf("\n Simulation ended normally in %lf seconds \n", cpu_time_used);
 
 	return 0;
 }
