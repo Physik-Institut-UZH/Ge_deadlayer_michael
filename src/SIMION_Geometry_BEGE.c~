@@ -2,33 +2,22 @@
 
 //setup geometry
 
-double GetBegeGridSize(){return SIMION_GridSize_Bege;}
-double GetBegeHeight(){return SIMION_GridSize_Bege*double(BEGE_G_Height);}
-double GetBegeDimension(){return SIMION_Dimension_Bege;}
-double GetBegeVoltage(){return SIMION_Voltage_Bege;}
-double GetBegeEpsScale(){return SIMION_EpsScale_Bege;}
-double GetBegeEpsExtScale(){return SIMION_EpsExtScale_Bege;}
-char* GetBegeDescription(){return SIMION_Description_Bege;}
-
-void InitializeBEGE(){
-  BEGE_G_GrooveDepth         = 30;
-  BEGE_G_GrooveWidth         = 30;
-  BEGE_G_PointContactRadius  = 70;
-  BEGE_G_PointContactDepth   = 1;
-  BEGE_G_PasLayThickness     = 0;
-  BEGE_G_Radius              = 300;
-  BEGE_G_Height              = 300; 
-  BEGE_G_SurfaceContactDepth = 10;
-  BEGE_G_GrooveInnerRadius   = 70;
-  BEGE_G_EdgeRadius          = 0;
-  BEGE_G_EdgeHeight          = 1;
-  BEGE_G_Spacing             = 0;
-  BEGE_G_ExtGroundWidth      = 0;
-  BEGE_G_ImpTop              = 1.0;
-  BEGE_G_ImpBot              = 1.0;
-  BEGE_G_Center              = 0;
-
-}
+int BEGE_G_GrooveDepth         = 30;
+int BEGE_G_GrooveWidth         = 30;
+int BEGE_G_PointContactRadius  = 70;
+int BEGE_G_PointContactDepth   = 1;
+int BEGE_G_PasLayThickness     = 0;
+int BEGE_G_Radius              = 300;
+int BEGE_G_Height              = 300; 
+int BEGE_G_SurfaceContactDepth = 10;
+int BEGE_G_GrooveInnerRadius   = 70;
+int BEGE_G_EdgeRadius          = 0;
+int BEGE_G_EdgeHeight          = 1;
+int BEGE_G_Spacing             = 0;
+int BEGE_G_ExtGroundWidth      = 0;
+double  BEGE_G_ImpTop              = 1.0;
+double  BEGE_G_ImpBot              = 1.0;
+double  BEGE_G_Center              = 0;
 
 int SIMION_Setup_GEOMETRY_BEGE(char *filename_setupfile) {
 
@@ -36,9 +25,6 @@ int SIMION_Setup_GEOMETRY_BEGE(char *filename_setupfile) {
 	double temp=0;
 	struct	ADL_KEYWORD **Kwords;
 	
-	InitializeBEGE();
-	InitializeArray(SIMION_GridSize_Bege,SIMION_Dimension_Bege,SIMION_Voltage_Bege,SIMION_EpsScale_Bege,SIMION_EpsExtScale_Bege,SIMION_Description_Bege);
-
 	//get list of keywords from file:
 	if (strlen(filename_setupfile)>1) {// if a filename is supplied, parse it
 		Kwords = ADL_parse_file (filename_setupfile);

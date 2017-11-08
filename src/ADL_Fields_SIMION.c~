@@ -353,10 +353,10 @@ int ADL_InDetector_SIMION(double *P)
     
   //if ADL_G_Stru is defined return true if the in bulk
   if(ADL_G_Stru){
-    if(ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == BULK)// ||
-       //ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == P_LAY ||
-       //ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == V_CONT ||
-       //ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == Z_CONT)        
+    if(ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == BULK ||
+       ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == P_LAY ||
+       ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == V_CONT ||
+       ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == Z_CONT)        
       ADL_Fields_SIMION_InDetector = 1;
     else ADL_Fields_SIMION_InDetector = 0;
     return ADL_Fields_SIMION_InDetector;

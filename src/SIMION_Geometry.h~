@@ -33,8 +33,6 @@ struct SIMION_PA *GetSIMIONnewPA();
 void GetSIMIONStructure(struct SIMION_PA *,int);
 void GetSIMIONWfield(struct SIMION_PA *,int);
 void GetSIMIONEfield(struct SIMION_PA *,int);
-void SetVoltage(double);
-double GetVoltage();
 
 //GEOMETRY routines
 static int (*SIMION_G_Setup_GEOMETRY)(char *);

@@ -18,9 +18,6 @@
 //                       double (*CalcCharge)(int, int, int, int)/*,
 //                       struct SIMION_PA *(*newPA)(void)*/){
 
-void SetVoltage(double voltage){SIMION_Voltage_Geom = voltage;}
-double GetVoltage(){return SIMION_Voltage_Geom;}
-
 int InitializeGeometry(){
 
     SIMION_G_Setup_GEOMETRY  = SIMION_Setup_GEOMETRY_PLANAR;

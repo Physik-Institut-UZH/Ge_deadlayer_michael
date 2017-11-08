@@ -116,7 +116,7 @@ int ADL_Status_TRACES_NUMRES(void){
   printf("ADL_G_NUMRES_MAXSTP       = %d\n", ADL_G_NUMRES_MAXSTP);
   printf("ADL_G_NUMRES_TINY         = %lf\n",ADL_G_NUMRES_TINY);
   printf("ADL_G_NUMRES_DTMIN        = %lf\n",ADL_G_NUMRES_DTMIN);
-  printf("ADL_G_NUMRES_DT0          = %lf\n",ADL_G_NUMRES_DT0);
+  printf("ADL_G_NUMRES_DT0          = %lf\n",ADL_G_NUMRES_DT0);
   printf("ADL_G_NUMRES_CLOUD_RMS    = %lf\n",ADL_G_NUMRES_CLOUD_RMS);
   printf("Depends on: EVENT, FIELDS, DRIFT, CONVL\n");
   if ((ADL_G_NUMRES_XYZe == NULL) || (ADL_G_NUMRES_XYZh == NULL))
@@ -135,7 +135,7 @@ void ADL_ElectronVelocity(double tt, double P[], double dPdt[])
         double E[4] = {GetEField(P)[0],GetEField(P)[1],GetEField(P)[2],GetEField(P)[3]};
         GetElectronVelocity(E,dPdt);
 	    //dPdt = Ve, electron drift velocity in [cm/us] !!!
-}
+	}
 	else dPdt[1] = dPdt[2] = dPdt[3] = 0.0; 
 		//does not make sense to track particles outside detector...
 	}
@@ -224,6 +224,7 @@ int ADL_CalculateTraces_NUMRES(struct ADL_EVENT *evnt)
             for (k=0; k<=GetDIMT(); k++)
                 evnt->TD.Tr[j][k] = 0.0;
 
+//	printf("Start TRACE_NUMRES for %i interactions \n",GetNINT());
         //For all interactions ...
         for (i=0; i<GetNINT(); i++){
             double Pint[4]={0,evnt->HP.Pos[i][0],evnt->HP.Pos[i][1],evnt->HP.Pos[i][2]};
@@ -239,7 +240,7 @@ int ADL_CalculateTraces_NUMRES(struct ADL_EVENT *evnt)
                     //calculate the induced charge in segment j:
                     for (j=0; j<GetNSEG(); j++)
                         for (k=0; k<=GetDIMT(); k++){
-                            if(!hCloudCenterRMS0) evnt->TD.Tr[j][k] += (evnt->HP.Eint[i])*(GetWeight(j,ADL_G_NUMRES_XYZh[k])-GetWeight(j,ADL_G_NUMRES_XYZe[k]));
+                            if(hCloudCenterRMS0 == 0) evnt->TD.Tr[j][k] += (evnt->HP.Eint[i])*(GetWeight(j,ADL_G_NUMRES_XYZh[k])-GetWeight(j,ADL_G_NUMRES_XYZe[k]));
                             else if(k>100){
                                 // If holes did not reach the p-contact yet -> compute cloud contribution
                                 if(ADL_G_NUMRES_XYZh[k][3] > gridsize){
@@ -297,6 +298,7 @@ int ADL_CalculateTraces_NUMRES(struct ADL_EVENT *evnt)
                 }
             }
         
+//	printf("End TRACE_NUMRES \n");
 
     ApplyConvolution(&(evnt->TD));
 	

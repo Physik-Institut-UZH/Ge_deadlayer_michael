@@ -244,7 +244,7 @@ int SIMION_CalcPoint_ICOAX(int nx, int ny, int nz, int i){ // get the radii
     }
     //inner contact (point contact)
     //    else if(radii < ICOAX_G_PointContactRadius && nz < ICOAX_G_PointContactDepth + ICOAX_G_Spacing + ICOAX_G_ExtGroundWidth){
-    else if(radii < ICOAX_G_PointContactRadius && nz < ICOAX_G_PointContactDepth*sqrt(1-pow(radii/ICOAX_G_PointContactRadius,2))){
+    else if(radii < SAGE_G_PointContactRadius && nz < SAGE_G_PointContactDepth*sqrt(1-pow(radii/SAGE_G_PointContactRadius,2))){
       if (i==0) return V_CONT;
       else return Z_CONT;
     }

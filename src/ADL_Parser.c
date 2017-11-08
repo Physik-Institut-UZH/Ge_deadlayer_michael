@@ -9,12 +9,14 @@
  *
  */
 
+#include <string.h>
+#include <stdlib.h>
 #include "ADL_Parser.h"
 
 int InitializeParser(int &MAXLINELEN, int &MAXKEYWORD){
     
-    MAXLINELEN = 100;  //maximum length of a line
-    MAXKEYWORD = 100;  //maximum number of keywords
+    MAXLINELEN = 200;  //maximum length of a line
+    MAXKEYWORD = 200;  //maximum number of keywords
     
     return 0;
 }
@@ -146,7 +148,7 @@ static int ADL_parse_line ( FILE *fp, char *keyword, char *svalue ) {
 
 /****************************************************************************/
 /* MAIN: Parse all keywords from the setup file								*/
-struct ADL_KEYWORD **ADL_parse_file (char *filename) {
+struct ADL_KEYWORD **ADL_parse_file (char *filename_ext) {
 	//*filename is the pointer to the (opened) setup file, ready to read the next line
 	//returned is a list of strings containing the keyword and the corresponding values.
 	//The first  keyword "FILENAME" contains the name of the file which is parsed
@@ -164,7 +166,25 @@ struct ADL_KEYWORD **ADL_parse_file (char *filename) {
 	int numerrors = 0;
 	FILE *fp;
 
-    InitializeParser(ADL_G_MAXLINELEN,ADL_G_MAXKEYWORD);
+	char* filename;
+	if(filename_ext[0] == '/') filename = filename_ext;
+	else if(filename_ext[0] == 'C'){
+		char* prefix = getenv("ADLDIR");
+                filename = (char*)malloc(strlen(prefix) + strlen(filename_ext) +1);
+                strcpy( filename, prefix );
+                strcat( filename, "/" );
+                strcat( filename, filename_ext );
+	}
+	else{
+		char* prefix = getenv("MAGEDIR");
+		filename = (char*)malloc(strlen(prefix) + strlen(filename_ext) +1);
+		strcpy( filename, prefix );
+		strcat( filename, "/" );
+		strcat( filename, filename_ext );	
+	}
+	if(GetADLDebug()) printf("DEBUG PARSER : SETUP FILE : %s \n", filename);
+
+        InitializeParser(ADL_G_MAXLINELEN,ADL_G_MAXKEYWORD);
     
 	//allocation of keywords:
 	kwords = (struct ADL_KEYWORD **) calloc(ADL_G_MAXKEYWORD,sizeof(struct ADL_KEYWORD*));
