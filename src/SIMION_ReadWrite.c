@@ -88,18 +88,25 @@ static	int *SIMION_make_geo_array(double *pot,struct SIMION_HEADER *hh){
 struct SIMION_PA * SIMION_READ(char *FilenameMask,double gridsize){
   struct SIMION_PA *returnvalue;
   struct SIMION_HEADER h;
-  char filename[100];
+  char* filename;
   FILE *temp;
   int i,n;
 
-  char* prefix = getenv("MAGEDIR");
-  strcpy( filename, prefix );
-  strcat( filename, "/" );
-  strcat( filename, FilenameMask );
-	
+   char buffer = (char) FilenameMask[0];
+   if(buffer != 'C'){
+     char* prefix = getenv("MAGETOADLDIR");
+     filename = (char*)malloc(strlen(prefix) + strlen(FilenameMask) +1);
+     strcpy( filename, prefix );
+     strcat( filename, "/" );
+     strcat( filename, FilenameMask);
+   }
+   else{
+     filename = (char*)malloc(strlen(FilenameMask) +1);
+     strcpy( filename, FilenameMask);
+   }
+   
   //first check number of files we can find:
   for (n=0;;n++){
-    //		sprintf(filename,FilenameMask,n);
     temp = fopen(filename,"rb");
     if (temp==NULL) break; 
     else{
@@ -164,7 +171,7 @@ static	void SIMION_write_pot_array(double *point, char *filename, struct SIMION_
   if (GetADLDebug()) printf("symm: x%ld y%ld z%ld, ",hh->nx,hh->ny,hh->nz);
   if (GetADLDebug()) printf("length: %ld, ",length);
   fwrite(point,sizeof(double),length,ifile);
-  SIMION_remove_max_voltage(point,hh);
+  SIMION_remove_max_voltage(point,hh); 
   if (GetADLDebug()) printf("maxv: %lf\n",hh->max_voltage);
   fclose(ifile);
 }

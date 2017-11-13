@@ -166,12 +166,20 @@ struct ADL_KEYWORD **ADL_parse_file (char *filename_ext) {
 	int numerrors = 0;
 	FILE *fp;
 
+	char buffer = (char) filename_ext[0];
+
 	char* filename;
-	char* prefix = getenv("ADLDIR");
-        filename = (char*)malloc(strlen(prefix) + strlen(filename_ext) +1);
-        strcpy( filename, prefix );
-        strcat( filename, "/" );
-        strcat( filename, filename_ext );
+	if(buffer != 'C'){
+	  char* prefix = getenv("MAGETOADLDIR");
+	  filename = (char*)malloc(strlen(prefix) + strlen(filename_ext) +1);
+	  strcpy( filename, prefix );
+	  strcat( filename, "/" );
+	  strcat( filename, filename_ext );
+	}
+	else{
+	  filename = (char*)malloc(strlen(filename_ext)+1); 
+	  strcpy(filename, filename_ext);
+	}
 
 	if(GetADLDebug()) printf("  DEBUG PARSER : SETUP FILE : %s ...\n", filename);
 
@@ -185,7 +193,7 @@ struct ADL_KEYWORD **ADL_parse_file (char *filename_ext) {
 
 	if(GetADLDebug()) printf("  DEBUG PARSER : Start reading Setup file \n");
     
-	fp = fopen(filename_ext,"r");
+	fp = fopen(filename,"r");
 	if (fp == NULL) { //opening file failed:
 	  if(GetADLDebug()) printf("  DEBUG PARSER : file not opened \n");
 		// add this error to list of errors:
@@ -200,8 +208,6 @@ struct ADL_KEYWORD **ADL_parse_file (char *filename_ext) {
 	else { // read file till end of file:
 	  if(GetADLDebug()) printf("  DEBUG PARSER : file opened \n");
 		while ((numerrors < ADL_G_MAXKEYWORD)&&(numkwords < ADL_G_MAXKEYWORD)) {
-			if(GetADLDebug()) printf("  DEBUG PARSER : %i \n", numkwords);
-
 			//allocate memory for next keyword:
 			temp = ADL_new_keyword();
 			// read next line of input from file:

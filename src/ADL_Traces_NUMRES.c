@@ -240,7 +240,7 @@ int ADL_CalculateTraces_NUMRES(struct ADL_EVENT *evnt)
                     //calculate the induced charge in segment j:
                     for (j=0; j<GetNSEG(); j++)
                         for (k=0; k<=GetDIMT(); k++){
-                            if(hCloudCenterRMS0 == 0) evnt->TD.Tr[j][k] += (evnt->HP.Eint[i])*(GetWeight(j,ADL_G_NUMRES_XYZh[k])-GetWeight(j,ADL_G_NUMRES_XYZe[k]));
+			  if(hCloudCenterRMS0 == 0) evnt->TD.Tr[j][k] += (evnt->HP.Eint[i])*(GetWeight(j,ADL_G_NUMRES_XYZh[k])-GetWeight(j,ADL_G_NUMRES_XYZe[k]));
                             else if(k>100){
                                 // If holes did not reach the p-contact yet -> compute cloud contribution
                                 if(ADL_G_NUMRES_XYZh[k][3] > gridsize){
@@ -295,24 +295,26 @@ int ADL_CalculateTraces_NUMRES(struct ADL_EVENT *evnt)
                             else evnt->TD.Tr[j][k] = 0;
                         }
                     }
-                }
-            }
+	    }
+	    else if(GetADLDebug())
+	      printf("Point not in the detector \n");
+	}
         
-//	printf("End TRACE_NUMRES \n");
-
-    ApplyConvolution(&(evnt->TD));
+	//	printf("End TRACE_NUMRES \n");
+	
+	ApplyConvolution(&(evnt->TD));
 	
         //Add non-ideal measurement effects: convolution with response functions
 	//Time shifts and crosstalk can all be implemented in the Response ...
-
+	
         evnt->TD.Trig = (int) GetTime(evnt);
-    //After adding response, set the core trigger time.
-
+	//After adding response, set the core trigger time.
+	
         for (j=0; j<GetNSEG(); j++) evnt->TD.Eseg[j] = evnt->TD.Tr[j][GetDIMT()];
 	//Remark: the "energy" calculated here is a very simplistic one
 	//It is not yet influenced by the preamplifier response,
 	//and only approximates what the energy filter would yield.
 	//(which cannot be simulated as the simulated traces are usually too short for that
-
+	
 	return 0; //return without errors.
 	}

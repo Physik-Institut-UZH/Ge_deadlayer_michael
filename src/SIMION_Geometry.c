@@ -206,6 +206,8 @@ int SIMION_G_WField(struct SIMION_PA *pa, int contact){
 
 	struct SIMION_HEADER *hh= &(pa->h);
 
+	printf("Weighting potential size : %i %i %i \n", hh->nx,hh->ny,hh->nz);
+
 	int x, y, z;
 	double nz=0;
 
