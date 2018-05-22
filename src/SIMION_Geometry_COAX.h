@@ -13,25 +13,25 @@
 #include "SIMION_Array.h"
 
 //allocate necessary variables:
-extern int COAX_G_Radius;
-extern int COAX_G_Height; 
-extern int COAX_G_BorHoleRadius;
-extern int COAX_G_BorHoleDepth;
-extern int COAX_G_CenContactRadius;
-extern int COAX_G_CenContactDepth;
-extern int COAX_G_OutContactRadius;
-extern int COAX_G_OutContactDepth;
-extern int COAX_G_GrooveDepth;
-extern int COAX_G_GrooveWidth;
-extern int COAX_G_GrooveInnerRadius;
-extern int COAX_G_PasLayThickness;
-extern int COAX_G_EdgeRadius;
-extern int COAX_G_EdgeHeight;
-extern int COAX_G_ExtGroundWidth;
-extern int COAX_G_Spacing;
-extern double COAX_G_ImpTop;
-extern double COAX_G_ImpBot;
-extern double COAX_G_Center;
+static int COAX_G_Radius;
+static int COAX_G_Height; 
+static int COAX_G_BorHoleRadius;
+static int COAX_G_BorHoleDepth;
+static int COAX_G_CenContactRadius;
+static int COAX_G_CenContactDepth;
+static int COAX_G_OutContactRadius;
+static int COAX_G_OutContactDepth;
+static int COAX_G_GrooveDepth;
+static int COAX_G_GrooveWidth;
+static int COAX_G_GrooveInnerRadius;
+static int COAX_G_PasLayThickness;
+static int COAX_G_EdgeRadius;
+static int COAX_G_EdgeHeight;
+static int COAX_G_ExtGroundWidth;
+static int COAX_G_Spacing;
+static double COAX_G_ImpTop;
+static double COAX_G_ImpBot;
+static double COAX_G_Center;
 
 static double SIMION_GridSize_Coax;
 static int SIMION_Dimension_Coax;
@@ -48,5 +48,13 @@ struct SIMION_PA *SIMION_newPA_COAX(void);
 
 int SIMION_CalcPoint_COAX(int,int,int,int);
 double SIMION_CalcCharge_COAX(int,int,int,int);
+ 
+double GetCoaxHeight();
+double GetCoaxGridSize();
+double GetCoaxDimension();
+double GetCoaxVoltage();
+double GetCoaxEpsScale();
+double GetCoaxEpsExtScale();
+char* GetCoaxDescription();
 
 #endif /* SIMION_GEOMETRY_COAX_H_ */

@@ -1,29 +1,43 @@
 #include "SIMION_Geometry_COAX.h"
 
+
+double GetCoaxGridSize(){return SIMION_GridSize_Coax;}
+double GetCoaxHeight(){return SIMION_GridSize_Coax*double(COAX_G_Height);}
+double GetCoaxDimension(){return SIMION_Dimension_Coax;}
+double GetCoaxVoltage(){return SIMION_Voltage_Coax;}
+double GetCoaxEpsScale(){return SIMION_EpsScale_Coax;}
+double GetCoaxEpsExtScale(){return SIMION_EpsExtScale_Coax;}
+char* GetCoaxDescription(){return SIMION_Description_Coax;}
+
+void InitializeCOAX(){
+
 //setup geometry
 
-int COAX_G_Radius              = 310;
-int COAX_G_Height              = 310; 
-int COAX_G_BorHoleRadius       = 100;
-int COAX_G_BorHoleDepth        = 100;
-int COAX_G_CenContactRadius    = 75;
-int COAX_G_CenContactDepth     = 10;
-int COAX_G_OutContactRadius    = 10;
-int COAX_G_OutContactDepth     = 10;
-int COAX_G_GrooveDepth         = 30;
-int COAX_G_GrooveWidth         = 30;
-int COAX_G_GrooveInnerRadius   = 75;
-int COAX_G_PasLayThickness     = 10;
-int COAX_G_EdgeRadius          = 0;
-int COAX_G_EdgeHeight          = 1;
-int COAX_G_Spacing             = 0;
-int COAX_G_ExtGroundWidth      = 0;
-double COAX_G_ImpTop               = 1.0;
-double COAX_G_ImpBot               = 1.0;
-double COAX_G_Center               = 0.0;
-
+  COAX_G_Radius              = 310;
+  COAX_G_Height              = 310; 
+  COAX_G_BorHoleRadius       = 100;
+  COAX_G_BorHoleDepth        = 100;
+  COAX_G_CenContactRadius    = 75;
+  COAX_G_CenContactDepth     = 10;
+  COAX_G_OutContactRadius    = 10;
+  COAX_G_OutContactDepth     = 10;
+  COAX_G_GrooveDepth         = 30;
+  COAX_G_GrooveWidth         = 30;
+  COAX_G_GrooveInnerRadius   = 75;
+  COAX_G_PasLayThickness     = 10;
+  COAX_G_EdgeRadius          = 0;
+  COAX_G_EdgeHeight          = 1;
+  COAX_G_Spacing             = 0;
+  COAX_G_ExtGroundWidth      = 0;
+  COAX_G_ImpTop               = 1.0;
+  COAX_G_ImpBot               = 1.0;
+  COAX_G_Center               = 0.0;
+}
 
 int SIMION_Setup_GEOMETRY_COAX(char *filename_setupfile) {
+
+  InitializeCOAX();
+  InitializeArray(SIMION_GridSize_Coax,SIMION_Dimension_Coax,SIMION_Voltage_Coax,SIMION_EpsScale_Coax,SIMION_EpsExtScale_Coax,SIMION_Description_Coax);
 
 	int	i,len, err=1;
 	double temp=0;

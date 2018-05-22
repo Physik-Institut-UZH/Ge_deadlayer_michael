@@ -160,6 +160,14 @@ int SIMION_Status_GEOMETRY(void){
     SIMION_EpsExtScale_Geom  = GetBegeEpsExtScale();
     SIMION_Description_Geom  = GetBegeDescription();
   }
+  if (SIMION_G_Setup_GEOMETRY  == SIMION_Setup_GEOMETRY_COAX){
+    printf("SIMION_G_Setup_GEOMETRY  -> SIMION_Setup_GEOMETRY_COAX\n");
+    SIMION_Height  = GetCoaxHeight();
+    SIMION_Voltage_Geom  = GetCoaxVoltage();
+    SIMION_EpsScale_Geom  = GetCoaxEpsScale();
+    SIMION_EpsExtScale_Geom  = GetCoaxEpsExtScale();
+    SIMION_Description_Geom  = GetCoaxDescription();
+  }
   if (SIMION_G_Status_GEOMETRY == SIMION_Status_GEOMETRY_ICOAX) printf("SIMION_G_Status_GEOMETRY -> SIMION_Status_GEOMETRY_ICOAX\n");
   if (SIMION_G_CalcPoint       == SIMION_CalcPoint_ICOAX)       printf("SIMION_G_CalcPoint       -> SIMION_CalcPoint_ICOAX\n");
   if (SIMION_G_CalcCharge      == SIMION_CalcCharge_ICOAX)      printf("SIMION_G_CalcCharge      -> SIMION_CalcCharge_ICOAX\n");
