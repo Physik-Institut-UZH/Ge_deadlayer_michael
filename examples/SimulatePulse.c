@@ -98,7 +98,7 @@ int main (int argc, char **argv) {
     double Px, Pz;
     
 	//initialize the required functions
-	if(argc<2){printf("Not enough path to SETUP file indicated.\n"); return 1;};
+  if(argc<4){printf("You must provide: Config. file and x z hit position.\n"); return 1;};
     sprintf(setupfile, "%s", argv[1]);
 
     Px = atof(argv[2]);
