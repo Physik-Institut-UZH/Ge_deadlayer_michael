@@ -14,7 +14,7 @@
 
 //allocate necessary variables:
 static int COAX_G_Radius;
-static int COAX_G_Height; 
+static int COAX_G_Height;
 static int COAX_G_BorHoleRadius;
 static int COAX_G_BorHoleDepth;
 static int COAX_G_CenContactRadius;
@@ -31,6 +31,8 @@ static int COAX_G_ExtGroundWidth;
 static int COAX_G_Spacing;
 static double COAX_G_ImpTop;
 static double COAX_G_ImpBot;
+static double COAX_G_ImpIn;
+static double COAX_G_ImpOut;
 static double COAX_G_Center;
 
 static double SIMION_GridSize_Coax;
@@ -48,7 +50,7 @@ struct SIMION_PA *SIMION_newPA_COAX(void);
 
 int SIMION_CalcPoint_COAX(int,int,int,int);
 double SIMION_CalcCharge_COAX(int,int,int,int);
- 
+
 double GetCoaxHeight();
 double GetCoaxGridSize();
 double GetCoaxDimension();

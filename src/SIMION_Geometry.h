@@ -27,14 +27,14 @@ static double SIMION_EpsExtScale_Geom;
 static char* SIMION_Description_Geom;
 
 //int InitializeGeometry(int(char*), int, int(int, int, int, int),double(int, int, int, int)/*,struct SIMION_PA * (void)*/);
+void SetVoltage(double);
+double GetVoltage();
 int InitializeGeometry();
 int SetupGeometry(char*,char*);
 struct SIMION_PA *GetSIMIONnewPA();
 void GetSIMIONStructure(struct SIMION_PA *,int);
 void GetSIMIONWfield(struct SIMION_PA *,int);
 void GetSIMIONEfield(struct SIMION_PA *,int);
-void SetVoltage(double);
-double GetVoltage();
 
 //GEOMETRY routines
 static int (*SIMION_G_Setup_GEOMETRY)(char *);

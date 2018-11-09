@@ -1,6 +1,5 @@
 #include "SIMION_Geometry_COAX.h"
 
-
 double GetCoaxGridSize(){return SIMION_GridSize_Coax;}
 double GetCoaxHeight(){return SIMION_GridSize_Coax*double(COAX_G_Height);}
 double GetCoaxDimension(){return SIMION_Dimension_Coax;}
@@ -13,31 +12,31 @@ void InitializeCOAX(){
 
 //setup geometry
 
-  COAX_G_Radius              = 310;
-  COAX_G_Height              = 310; 
-  COAX_G_BorHoleRadius       = 100;
-  COAX_G_BorHoleDepth        = 100;
-  COAX_G_CenContactRadius    = 75;
-  COAX_G_CenContactDepth     = 10;
-  COAX_G_OutContactRadius    = 10;
-  COAX_G_OutContactDepth     = 10;
-  COAX_G_GrooveDepth         = 30;
-  COAX_G_GrooveWidth         = 30;
-  COAX_G_GrooveInnerRadius   = 75;
-  COAX_G_PasLayThickness     = 10;
-  COAX_G_EdgeRadius          = 0;
-  COAX_G_EdgeHeight          = 1;
-  COAX_G_Spacing             = 0;
-  COAX_G_ExtGroundWidth      = 0;
-  COAX_G_ImpTop               = 1.0;
-  COAX_G_ImpBot               = 1.0;
-  COAX_G_Center               = 0.0;
+ COAX_G_Radius              = 310;
+ COAX_G_Height              = 310;
+ COAX_G_BorHoleRadius       = 100;
+ COAX_G_BorHoleDepth        = 100;
+ COAX_G_CenContactRadius    = 75;
+ COAX_G_CenContactDepth     = 10;
+ COAX_G_OutContactRadius    = 10;
+ COAX_G_OutContactDepth     = 10;
+ COAX_G_GrooveDepth         = 30;
+ COAX_G_GrooveWidth         = 30;
+ COAX_G_GrooveInnerRadius   = 75;
+ COAX_G_PasLayThickness     = 10;
+ COAX_G_EdgeRadius          = 0;
+ COAX_G_EdgeHeight          = 1;
+ COAX_G_Spacing             = 0;
+ COAX_G_ExtGroundWidth      = 0;
+ COAX_G_ImpTop              = 1.0;
+ COAX_G_ImpBot              = 1.0;
+ COAX_G_Center              = 0.0;
 }
 
 int SIMION_Setup_GEOMETRY_COAX(char *filename_setupfile) {
 
   InitializeCOAX();
-  InitializeArray(SIMION_GridSize_Coax,SIMION_Dimension_Coax,SIMION_Voltage_Coax,SIMION_EpsScale_Coax,SIMION_EpsExtScale_Coax,SIMION_Description_Coax);
+InitializeArray(SIMION_GridSize_Coax,SIMION_Dimension_Coax,SIMION_Voltage_Coax,SIMION_EpsScale_Coax,SIMION_EpsExtScale_Coax,SIMION_Description_Coax);
 
 	int	i,len, err=1;
 	double temp=0;
@@ -86,7 +85,7 @@ int SIMION_Setup_GEOMETRY_COAX(char *filename_setupfile) {
 				sscanf(Kwords[2+i]->svalue,"%lf" ,&temp);
 				COAX_G_CenContactDepth=SIMION_grid(temp,SIMION_GridSize_Coax);
 			}
-			if (strcmp(Kwords[2+i]->keyword,"COAX_G_CenContactRadius")==0){ 
+			if (strcmp(Kwords[2+i]->keyword,"COAX_G_CenContactRadius")==0){
 				sscanf(Kwords[2+i]->svalue,"%lf" ,&temp);
 				COAX_G_CenContactRadius=SIMION_grid(temp,SIMION_GridSize_Coax);
 			}
@@ -135,6 +134,10 @@ int SIMION_Setup_GEOMETRY_COAX(char *filename_setupfile) {
 				sscanf(Kwords[2+i]->svalue,"%lf",&COAX_G_ImpTop);
 			if (strcmp(Kwords[2+i]->keyword,"COAX_G_ImpBot")==0) 
 				sscanf(Kwords[2+i]->svalue,"%lf",&COAX_G_ImpBot);
+      if (strcmp(Kwords[2+i]->keyword,"COAX_G_ImpIn")==0)
+        sscanf(Kwords[2+i]->svalue,"%lf",&COAX_G_ImpIn);
+      if (strcmp(Kwords[2+i]->keyword,"COAX_G_ImpOut")==0)
+        sscanf(Kwords[2+i]->svalue,"%lf",&COAX_G_ImpOut);
 		}
 	}
 
@@ -175,8 +178,11 @@ int SIMION_Status_GEOMETRY_COAX(void){
 	printf("COAX_G_EdgeHeight          = %ld\n",COAX_G_EdgeHeight);
 	printf("COAX_G_Spacing             = %ld\n",COAX_G_Spacing);
 	printf("COAX_G_ExtGroundWidth      = %ld\n",COAX_G_ExtGroundWidth);
-	printf("COAX_G_ImpTop              = %lf\n",COAX_G_ImpTop);
-	printf("COAX_G_ImpBot              = %lf\n",COAX_G_ImpBot);
+  printf("COAX_G_ImpTop              = %lf\n",COAX_G_ImpTop);
+  printf("COAX_G_ImpBot              = %lf\n",COAX_G_ImpBot);
+  printf("COAX_G_ImpIn               = %lf\n",COAX_G_ImpIn);
+  printf("COAX_G_ImpOut              = %lf\n",COAX_G_ImpOut);
+
 
 	return 0;
 }
@@ -213,11 +219,11 @@ int SIMION_CalcPoint_COAX(int nx, int ny, int nz, int i){ // get the radii
 	else COAX_G_Center = COAX_G_Radius + COAX_G_Spacing + COAX_G_ExtGroundWidth-1.0;
 
 	double radii = sqrt((double)((nx - COAX_G_Center)*(nx - COAX_G_Center) + (ny - COAX_G_Center)*(ny - COAX_G_Center)));
-	double rEdge=(double)(COAX_G_Radius-COAX_G_EdgeRadius)/(double)COAX_G_EdgeHeight*(double)(nz-COAX_G_Spacing-COAX_G_ExtGroundWidth) + (double)(COAX_G_EdgeRadius);
+  double rEdge=(double)(COAX_G_Radius-COAX_G_EdgeRadius)/(double)COAX_G_EdgeHeight*(double)(nz-COAX_G_Spacing-COAX_G_ExtGroundWidth) + (double)(COAX_G_EdgeRadius);
 	
 	if (COAX_G_EdgeHeight==0) printf ("\nERROR: COAX_G_EdgeHeight cannot be equals to zero!\n");
 	
-	double dlEdge = rEdge-(double)COAX_G_OutContactDepth/(double)COAX_G_EdgeHeight*sqrt((double)(COAX_G_EdgeHeight*COAX_G_EdgeHeight+(COAX_G_Radius-COAX_G_EdgeRadius)*(COAX_G_Radius-COAX_G_EdgeRadius)));
+  double dlEdge = rEdge-(double)COAX_G_OutContactDepth/(double)COAX_G_EdgeHeight*sqrt((double)(COAX_G_EdgeHeight*COAX_G_EdgeHeight+(COAX_G_Radius-COAX_G_EdgeRadius)*(COAX_G_Radius-COAX_G_EdgeRadius)));
 
 	//Point is inside detector volume
 	if(radii < rEdge && radii < COAX_G_Radius && nz < COAX_G_Height + COAX_G_Spacing + COAX_G_ExtGroundWidth && nz >= COAX_G_Spacing + COAX_G_ExtGroundWidth){
@@ -232,7 +238,7 @@ int SIMION_CalcPoint_COAX(int nx, int ny, int nz, int i){ // get the radii
 		}
 
 		//Point is in the bore hole or central contact
-		else if(radii < COAX_G_BorHoleRadius + COAX_G_CenContactDepth && nz < COAX_G_Spacing + COAX_G_ExtGroundWidth + COAX_G_BorHoleDepth + COAX_G_CenContactDepth){
+		else if(radii < COAX_G_BorHoleRadius + COAX_G_CenContactDepth && nz < COAX_G_Spacing + COAX_G_ExtGroundWidth + COAX_G_BorHoleDepth + COAX_G_CenContactDepth && nz > COAX_G_CenContactDepth){
 			//Point is in the bore hole
 			if(radii < COAX_G_BorHoleRadius && nz < COAX_G_Spacing + COAX_G_ExtGroundWidth + COAX_G_BorHoleDepth) return OUTSIDE;
 			//Point is central contact
@@ -242,17 +248,20 @@ int SIMION_CalcPoint_COAX(int nx, int ny, int nz, int i){ // get the radii
 			}
 		}
 		//wrap around of central contact
-		else if(radii < COAX_G_CenContactRadius && nz < COAX_G_CenContactDepth + COAX_G_Spacing + COAX_G_ExtGroundWidth){
-			if (i==0) return V_CONT;
-			else return Z_CONT;
-		}
+		else if(radii < COAX_G_CenContactRadius && nz <= COAX_G_CenContactDepth + COAX_G_Spacing + COAX_G_ExtGroundWidth){
+      if(radii < COAX_G_BorHoleRadius) return OUTSIDE;
+      else{
+        if (i==0) return V_CONT;
+        else return Z_CONT;
+      }
+    }
 		//outer contact (Out contact)
 		else if(nz >= COAX_G_Height - COAX_G_OutContactDepth + COAX_G_Spacing + COAX_G_ExtGroundWidth){
 			if (i==1) return V_CONT;
 			else return Z_CONT;
 		}
-		else if (radii >= dlEdge || radii >= COAX_G_Radius - COAX_G_OutContactDepth){
-			if (i==1) return V_CONT;
+		else if ((radii >= dlEdge && radii > COAX_G_OutContactRadius) || radii >= COAX_G_Radius - COAX_G_OutContactDepth){
+      if (i==1) return V_CONT;
 			else return Z_CONT;
 		}
 		else if(radii >= COAX_G_OutContactRadius && nz < COAX_G_OutContactDepth + COAX_G_Spacing + COAX_G_ExtGroundWidth){

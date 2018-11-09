@@ -9,14 +9,12 @@
  *
  */
 
-#include <string.h>
-#include <stdlib.h>
 #include "ADL_Parser.h"
 
 int InitializeParser(int &MAXLINELEN, int &MAXKEYWORD){
     
-    MAXLINELEN = 200;  //maximum length of a line
-    MAXKEYWORD = 200;  //maximum number of keywords
+    MAXLINELEN = 100;  //maximum length of a line
+    MAXKEYWORD = 100;  //maximum number of keywords
     
     return 0;
 }
@@ -148,7 +146,7 @@ static int ADL_parse_line ( FILE *fp, char *keyword, char *svalue ) {
 
 /****************************************************************************/
 /* MAIN: Parse all keywords from the setup file								*/
-struct ADL_KEYWORD **ADL_parse_file (char *filename_ext) {
+struct ADL_KEYWORD **ADL_parse_file (char *filename) {
 	//*filename is the pointer to the (opened) setup file, ready to read the next line
 	//returned is a list of strings containing the keyword and the corresponding values.
 	//The first  keyword "FILENAME" contains the name of the file which is parsed
@@ -166,36 +164,14 @@ struct ADL_KEYWORD **ADL_parse_file (char *filename_ext) {
 	int numerrors = 0;
 	FILE *fp;
 
-	char buffer = (char) filename_ext[0];
-
-	char* filename;
-	if(buffer != 'C'){
-	  char* prefix = getenv("MAGETOADLDIR");
-	  filename = (char*)malloc(strlen(prefix) + strlen(filename_ext) +1);
-	  strcpy( filename, prefix );
-	  strcat( filename, "/" );
-	  strcat( filename, filename_ext );
-	}
-	else{
-	  filename = (char*)malloc(strlen(filename_ext)+1); 
-	  strcpy(filename, filename_ext);
-	}
-
-	if(GetADLDebug()) printf("  DEBUG PARSER : SETUP FILE : %s ...\n", filename);
-
-        InitializeParser(ADL_G_MAXLINELEN,ADL_G_MAXKEYWORD);
+    InitializeParser(ADL_G_MAXLINELEN,ADL_G_MAXKEYWORD);
     
-	if(GetADLDebug()) printf("  DEBUG PARSER : Initialized : %i / %i\n",ADL_G_MAXLINELEN,ADL_G_MAXKEYWORD);
-
 	//allocation of keywords:
 	kwords = (struct ADL_KEYWORD **) calloc(ADL_G_MAXKEYWORD,sizeof(struct ADL_KEYWORD*));
 	errors = (struct ADL_KEYWORD **) calloc(ADL_G_MAXKEYWORD,sizeof(struct ADL_KEYWORD*));
-
-	if(GetADLDebug()) printf("  DEBUG PARSER : Start reading Setup file \n");
     
 	fp = fopen(filename,"r");
 	if (fp == NULL) { //opening file failed:
-	  if(GetADLDebug()) printf("  DEBUG PARSER : file not opened \n");
 		// add this error to list of errors:
 		numkwords = 0;
 		numerrors = 1;
@@ -206,14 +182,13 @@ struct ADL_KEYWORD **ADL_parse_file (char *filename_ext) {
 		}
 
 	else { // read file till end of file:
-	  if(GetADLDebug()) printf("  DEBUG PARSER : file opened \n");
 		while ((numerrors < ADL_G_MAXKEYWORD)&&(numkwords < ADL_G_MAXKEYWORD)) {
 			//allocate memory for next keyword:
 			temp = ADL_new_keyword();
 			// read next line of input from file:
 			linenum += ADL_parse_line (fp,temp->keyword,temp->svalue);
 
-	                temp->linenumber = linenum;
+            temp->linenumber = linenum;
 			// break if end of file is detected:
 			if (strcmp(temp->keyword,"EOF")==0) {free(temp); break;}
 
@@ -228,6 +203,7 @@ struct ADL_KEYWORD **ADL_parse_file (char *filename_ext) {
 				kwords[numkwords]= temp;
 				numkwords++;
 				}
+		
 		} //while
 	} //else
 

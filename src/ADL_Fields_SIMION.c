@@ -83,26 +83,26 @@ int ADL_Setup_FIELDS_SIMION(char *filename_setupfile){
     //using actual gridsize, read in Epot and Wpot:
     for (i=0;i<len;i++) {
       if (strcmp(Kwords[2+i]->keyword,"ADL_G_Epot")==0) {
-	if (ADL_G_Epot>NULL) free(ADL_G_Epot);
+	if (ADL_G_Epot>(void*)NULL) free(ADL_G_Epot);
 	if(GetADLDebug()) printf("\n**** Reading Electric Potential Arrays ****\n");
 	ADL_G_Epot=SIMION_READ(Kwords[2+i]->svalue,ADL_Fields_SIMION_GridSize);
       }
       if (strcmp(Kwords[2+i]->keyword,"ADL_G_Wpot")==0) {
-	if (ADL_G_Wpot>NULL) free(ADL_G_Wpot);
+	if (ADL_G_Wpot>(void*)NULL) free(ADL_G_Wpot);
 	if(GetADLDebug()) printf("\n**** Reading Weighting Potential Arrays ****\n");
 	ADL_G_Wpot=SIMION_READ(Kwords[2+i]->svalue,ADL_Fields_SIMION_GridSize);
       }
       if (strcmp(Kwords[2+i]->keyword,"ADL_G_Stru")==0) {
-	if (ADL_G_Stru>NULL) free(ADL_G_Stru);
+	if (ADL_G_Stru>(void*)NULL) free(ADL_G_Stru);
 	if(GetADLDebug()) printf("\n**** Reading Structure Potential Arrays ****\n");
 	ADL_G_Stru=SIMION_READ(Kwords[2+i]->svalue,ADL_Fields_SIMION_GridSize);
       }
     }
 
     //At this point ADL_G_Epot and ADL_G_Wpot must be defined:
-    if (ADL_G_Epot==NULL) {printf("\nERROR SETUP FIELDS SIMION: ADL_G_Epot undefined\n"); return 0;}
-    if (ADL_G_Wpot==NULL) {printf("\nERROR SETUP FIELDS SIMION: ADL_G_Wpot undefined\n"); return 0;}
-    if (ADL_G_Stru==NULL) {printf("\nWARNING SETUP FIELDS SIMION: ADL_G_Stru undefined\n");}
+    if (ADL_G_Epot==(void*)NULL) {printf("\nERROR SETUP FIELDS SIMION: ADL_G_Epot undefined\n"); return 0;}
+    if (ADL_G_Wpot==(void*)NULL) {printf("\nERROR SETUP FIELDS SIMION: ADL_G_Wpot undefined\n"); return 0;}
+    if (ADL_G_Stru==(void*)NULL) {printf("\nWARNING SETUP FIELDS SIMION: ADL_G_Stru undefined\n");}
 
     //scan now for scaling factors for Epot:
     if(GetADLDebug()) printf("\n**** Scaling electrical potential arrays ****\n");
@@ -330,8 +330,8 @@ int ADL_InDetector_SIMION(double *P)
 //In general: In Detector = weighting potential core in [0...1]
 {
   int dx,dy,dz;
-
-  if ((ADL_G_Epot->h.nx > 2) && (ADL_G_Epot->h.ny == 1) && (ADL_G_Epot->h.nz > 2))
+    
+if ((ADL_G_Epot->h.nx > 2) && (ADL_G_Epot->h.ny == 1) && (ADL_G_Epot->h.nz > 2))
     {
       //transform position into gridunits for 2D cylindric array
       dx = (sqrt((P[1]-ADL_Fields_SIMION_Center)*(P[1]-ADL_Fields_SIMION_Center)+(P[2]-ADL_Fields_SIMION_Center)*(P[2]-ADL_Fields_SIMION_Center))/ADL_Fields_SIMION_GridSize);
@@ -353,11 +353,7 @@ int ADL_InDetector_SIMION(double *P)
     
   //if ADL_G_Stru is defined return true if the in bulk
   if(ADL_G_Stru){
-    if(ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == BULK)// ||
-       //ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == P_LAY ||
-       //ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == V_CONT ||
-       //ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == Z_CONT)        
-      ADL_Fields_SIMION_InDetector = 1;
+    if(ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == BULK || ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == P_LAY)        ADL_Fields_SIMION_InDetector = 1;
     else ADL_Fields_SIMION_InDetector = 0;
     return ADL_Fields_SIMION_InDetector;
   }

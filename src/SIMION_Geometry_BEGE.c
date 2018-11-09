@@ -1,7 +1,5 @@
 #include "SIMION_Geometry_BEGE.h"
 
-//setup geometry
-
 double GetBegeGridSize(){return SIMION_GridSize_Bege;}
 double GetBegeHeight(){return SIMION_GridSize_Bege*double(BEGE_G_Height);}
 double GetBegeDimension(){return SIMION_Dimension_Bege;}
@@ -11,34 +9,38 @@ double GetBegeEpsExtScale(){return SIMION_EpsExtScale_Bege;}
 char* GetBegeDescription(){return SIMION_Description_Bege;}
 
 void InitializeBEGE(){
-  BEGE_G_GrooveDepth         = 30;
-  BEGE_G_GrooveWidth         = 30;
-  BEGE_G_PointContactRadius  = 70;
-  BEGE_G_PointContactDepth   = 1;
-  BEGE_G_PasLayThickness     = 0;
-  BEGE_G_Radius              = 300;
-  BEGE_G_Height              = 300; 
-  BEGE_G_SurfaceContactDepth = 10;
-  BEGE_G_GrooveInnerRadius   = 70;
-  BEGE_G_EdgeRadius          = 0;
-  BEGE_G_EdgeHeight          = 1;
-  BEGE_G_Spacing             = 0;
-  BEGE_G_ExtGroundWidth      = 0;
-  BEGE_G_ImpTop              = 1.0;
-  BEGE_G_ImpBot              = 1.0;
-  BEGE_G_Center              = 0;
+  
+//setup geometry
 
+ BEGE_G_GrooveDepth         = 30;
+ BEGE_G_GrooveWidth         = 30;
+ BEGE_G_PointContactRadius  = 70;
+ BEGE_G_PointContactDepth   = 1;
+ BEGE_G_PasLayThickness     = 0;
+ BEGE_G_Radius              = 300;
+ BEGE_G_Height              = 300;
+ BEGE_G_SurfaceContactDepth = 10;
+ BEGE_G_GrooveInnerRadius   = 70;
+ BEGE_G_EdgeRadius          = 0;
+ BEGE_G_EdgeHeight          = 1;
+ BEGE_G_Spacing             = 0;
+ BEGE_G_ExtGroundWidth      = 0;
+ BEGE_G_ImpTop              = 1.0;
+ BEGE_G_ImpBot              = 1.0;
+ BEGE_G_ImpIn                = 0.0;
+ BEGE_G_ImpOut               = 0.0;
+ BEGE_G_Center              = 0;
 }
 
 int SIMION_Setup_GEOMETRY_BEGE(char *filename_setupfile) {
 
+  InitializeBEGE();
+  InitializeArray(SIMION_GridSize_Bege,SIMION_Dimension_Bege,SIMION_Voltage_Bege,SIMION_EpsScale_Bege,SIMION_EpsExtScale_Bege,SIMION_Description_Bege);
+  
 	int	i,len, err=1;
 	double temp=0;
 	struct	ADL_KEYWORD **Kwords;
 	
-	InitializeBEGE();
-	InitializeArray(SIMION_GridSize_Bege,SIMION_Dimension_Bege,SIMION_Voltage_Bege,SIMION_EpsScale_Bege,SIMION_EpsExtScale_Bege,SIMION_Description_Bege);
-
 	//get list of keywords from file:
 	if (strlen(filename_setupfile)>1) {// if a filename is supplied, parse it
 		Kwords = ADL_parse_file (filename_setupfile);
@@ -68,6 +70,10 @@ int SIMION_Setup_GEOMETRY_BEGE(char *filename_setupfile) {
 				sscanf(Kwords[2+i]->svalue,"%lf",&BEGE_G_ImpTop);
 			if (strcmp(Kwords[2+i]->keyword,"BEGE_G_ImpBot")==0) 
 				sscanf(Kwords[2+i]->svalue,"%lf",&BEGE_G_ImpBot);
+      if (strcmp(Kwords[2+i]->keyword,"BEGE_G_ImpIn")==0)
+        sscanf(Kwords[2+i]->svalue,"%lf",&BEGE_G_ImpIn);
+      if (strcmp(Kwords[2+i]->keyword,"BEGE_G_ImpOut")==0)
+        sscanf(Kwords[2+i]->svalue,"%lf",&BEGE_G_ImpOut);
 			if (strcmp(Kwords[2+i]->keyword,"BEGE_G_Radius")==0){ 
 				sscanf(Kwords[2+i]->svalue,"%lf" ,&temp);
 				BEGE_G_Radius=SIMION_grid(temp,SIMION_GridSize_Bege);
@@ -154,6 +160,8 @@ int SIMION_Status_GEOMETRY_BEGE(void){
 	printf("BEGE_G_SurfaceContactDepth = %ld\n",BEGE_G_SurfaceContactDepth);
 	printf("BEGE_G_ImpTop              = %lf\n",BEGE_G_ImpTop);
 	printf("BEGE_G_ImpBot              = %lf\n",BEGE_G_ImpBot);
+  printf("BEGE_G_ImpBot              = %lf\n",BEGE_G_ImpBot);
+  printf("BEGE_G_ImpIn               = %lf\n",BEGE_G_ImpIn);
 	printf("BEGE_G_Center              = %lf\n",BEGE_G_Center);
 	printf("BEGE_G_Spacing             = %ld\n",BEGE_G_Spacing);
 	printf("BEGE_G_ExtGroundWidth      = %ld\n",BEGE_G_ExtGroundWidth);

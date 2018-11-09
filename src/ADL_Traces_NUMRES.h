@@ -25,6 +25,7 @@
 int InitializeTracesNumres();
 
 double GetCloudRMS();
+double GetDiffCoef();
 double** GetNUMRES_XYZe();
 double** GetNUMRES_XYZh();
 

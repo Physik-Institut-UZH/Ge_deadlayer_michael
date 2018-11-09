@@ -18,7 +18,7 @@ static int BEGE_G_PointContactRadius;
 static int BEGE_G_PointContactDepth;
 static int BEGE_G_PasLayThickness;
 static int BEGE_G_Radius;
-static int BEGE_G_Height; 
+static int BEGE_G_Height;
 static int BEGE_G_SurfaceContactDepth;
 static int BEGE_G_GrooveInnerRadius;
 static int BEGE_G_EdgeRadius;
@@ -27,6 +27,8 @@ static int BEGE_G_Spacing;
 static int BEGE_G_ExtGroundWidth;
 static double BEGE_G_ImpTop;
 static double BEGE_G_ImpBot;
+static double BEGE_G_ImpIn;
+static double BEGE_G_ImpOut;
 static double BEGE_G_Center;
 
 static double SIMION_GridSize_Bege;

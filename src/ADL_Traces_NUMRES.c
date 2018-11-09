@@ -120,7 +120,7 @@ int ADL_Status_TRACES_NUMRES(void){
   printf("ADL_G_NUMRES_MAXSTP       = %d\n", ADL_G_NUMRES_MAXSTP);
   printf("ADL_G_NUMRES_TINY         = %lf\n",ADL_G_NUMRES_TINY);
   printf("ADL_G_NUMRES_DTMIN        = %lf\n",ADL_G_NUMRES_DTMIN);
-    printf("ADL_G_NUMRES_DT0          = %lf\n",ADL_G_NUMRES_DT0);
+  printf("ADL_G_NUMRES_DT0          = %lf\n",ADL_G_NUMRES_DT0);
   printf("ADL_G_NUMRES_CLOUD_RMS    = %lf\n",ADL_G_NUMRES_CLOUD_RMS);
   printf("Depends on: EVENT, FIELDS, DRIFT, CONVL\n");
   if ((ADL_G_NUMRES_XYZe == NULL) || (ADL_G_NUMRES_XYZh == NULL))
