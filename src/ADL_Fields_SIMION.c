@@ -353,7 +353,7 @@ if ((ADL_G_Epot->h.nx > 2) && (ADL_G_Epot->h.ny == 1) && (ADL_G_Epot->h.nz > 2))
     
   //if ADL_G_Stru is defined return true if the in bulk
   if(ADL_G_Stru){
-    if(ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == BULK || ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == P_LAY)        ADL_Fields_SIMION_InDetector = 1;
+    if(ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == Z_CONT || ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == BULK || ADL_G_Stru->Pot[0][SIMION_node(&(ADL_G_Stru->h),dx,dy,dz)] == P_LAY)        ADL_Fields_SIMION_InDetector = 1;
     else ADL_Fields_SIMION_InDetector = 0;
     return ADL_Fields_SIMION_InDetector;
   }
