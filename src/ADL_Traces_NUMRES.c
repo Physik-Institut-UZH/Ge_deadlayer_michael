@@ -247,8 +247,8 @@ int ADL_CalculateTraces_NUMRES(struct ADL_EVENT *evnt)
         for (j=0; j<GetNSEG(); j++)
           for (k=0; k<=GetDIMT(); k++){
 	    // If hole or electron reaches negative Z-axis value (outside signal contact) send it to exactly 0.0 -> Wpot = 1.0
-	    if(ADL_G_NUMRES_XYZh[k]<0) ADL_G_NUMRES_XYZh[k]=0.0;
-	    if(ADL_G_NUMRES_XYZe[k]<0) ADL_G_NUMRES_XYZe[k]=0.0;
+	    if(ADL_G_NUMRES_XYZh[k][3]<0) ADL_G_NUMRES_XYZh[k][3]=0.0;
+	    if(ADL_G_NUMRES_XYZe[k][3]<0) ADL_G_NUMRES_XYZe[k][3]=0.0;
 
             if(!hCloudCenterRMS0) evnt->TD.Tr[j][k] += (evnt->HP.Eint[i])*(GetWeight(j,ADL_G_NUMRES_XYZh[k])-GetWeight(j,ADL_G_NUMRES_XYZe[k]));
             else if(k>100){

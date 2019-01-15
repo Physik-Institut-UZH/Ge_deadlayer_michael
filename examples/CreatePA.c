@@ -53,14 +53,14 @@ int main(int argc, char **argv)
 
 
   printf("Setup file : %s \n",filename_setupfile);
-  SetADLDebug(0); // Can be 0 or 1
   
   if (strlen(filename_setupfile)>1) ADLSetup(filename_setupfile);
   else return 1;
+  SetADLDebug(1); // Can be 0 or 1
   
   if (ReadVersion != GetADLVersion()) printf("\nWARNING ADL (%.2lf) setup: version (%.2lf) outdated ?\n",GetADLVersion(),ReadVersion);
   
-  ADLStatus();
+  //ADLStatus();
   SIMION_Status_GEOMETRY();
   SIMION_Status_SOLVER();
 
