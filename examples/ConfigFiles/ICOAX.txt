@@ -45,14 +45,13 @@ SIMION_G_DEBUG                      0 ! print extra information if != 0
 
 ADL_G_SIMION_SmallPot            1e-6 ![V] Small potential, Defines e.g. ADL_In_Detector_SIMION
 ADL_G_Temp			   90 ![K]
-ADL_G_RCtau			 0.03 ![mus]
 
 ADL_G_Wpot              ICOAX_Wpot.pa ! Location where the weighting potential is saved
 ADL_G_Epot              ICOAX_Epot.pa ! Location where the electric potential is saved
 ADL_G_Stru              ICOAX_Stru.pa ! Location where the structural potential is saved
 
 ADL_G_VERSION 	4.2
-ADL_G_DEBUG	0		      ! 0: Debugging mode switched OFF
+ADL_G_DEBUG	1		      ! 0: Debugging mode switched OFF
 
 ADL_FIELDS_SIMION	ConfigFiles/ICOAX.txt
 ADL_EVENT		ConfigFiles/EVENT.txt
