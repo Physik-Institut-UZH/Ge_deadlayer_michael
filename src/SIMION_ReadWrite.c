@@ -43,10 +43,10 @@ double *SIMION_read_in_pot_array(char *naam,struct SIMION_HEADER *hh){
 		else {
 			if (GetADLDebug()) printf("%s: ",naam);
 			fread(hh,sizeof(struct SIMION_HEADER),1,ifile);
-			if (GetADLDebug()) printf("x%ld y%ld z%ld, ",hh->nx,hh->ny,hh->nz);
+			if (GetADLDebug()) printf("x%ld y%ld z%ld, ", (long int) hh->nx, (long int) hh->ny, (long int) hh->nz);
 			point=(double *)calloc(hh->nx*hh->ny*hh->nz,sizeof(double));
 			fread(point,sizeof(double),hh->nx*hh->ny*hh->nz,ifile);
-			if (GetADLDebug()) printf("symm: x%ld y%ld z%ld, ",SIMION_X_MIRRORED(hh),SIMION_Y_MIRRORED(hh),SIMION_Z_MIRRORED(hh));
+			if (GetADLDebug()) printf("symm: x%ld y%ld z%ld, ", (long int) SIMION_X_MIRRORED(hh), (long int) SIMION_Y_MIRRORED(hh), (long int) SIMION_Z_MIRRORED(hh));
 			fclose(ifile);
 			if (GetADLDebug()) printf("maxv: %lf\n",hh->max_voltage);
 		}
@@ -152,7 +152,7 @@ static	void SIMION_write_pot_array(double *point, char *filename, struct SIMION_
 		if ((ifile = fopen(filename,"wb"))==NULL) printf("\nERROR SIMION WRITE: %s can not be opened\n",filename);
 		else if (GetADLDebug()) printf("Writing %s: ",filename);
 		if (GetADLDebug()) printf("check %d -",fwrite(hh,sizeof(struct SIMION_HEADER),1,ifile));
-		if (GetADLDebug()) printf("symm: x%ld y%ld z%ld, ",hh->nx,hh->ny,hh->nz);
+		if (GetADLDebug()) printf("symm: x%ld y%ld z%ld, ", (long int) hh->nx, (long int) hh->ny, (long int) hh->nz);
 		fwrite(point,sizeof(double),length,ifile);
 		SIMION_remove_max_voltage(point,hh);
 		if (GetADLDebug()) printf("maxv: %lf\n",hh->max_voltage);

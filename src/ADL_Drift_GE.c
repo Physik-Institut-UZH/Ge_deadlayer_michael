@@ -371,15 +371,13 @@ void ADL_HoleVelocityInLatticeSystem(double Efield[3], double Result[3])
     //
     
 	Amp = Vh100(normE)*f; // Correct for temp. (Y. Kermaidic 2017)
-	if (Amp > 0) k0 = KaNul(Vh111(normE)/Amp);
+	if (Amp > 0) k0 = KaNul(f*Vh111(normE)/Amp);    // Vh111 should be corrected as well (K.Panas 2019)
 
 	if (normE > ADL_G_SmallField)
 		{
 		//Calculating the angles:
 		teta = acos(Efield[2]/normE); 
-		if (fabs(Efield[0]) > ADL_G_SmallField)  phi = atan(Efield[1]/Efield[0]);
-		else phi = 0.0;
-		if (Efield[0] <= 0.0) phi += PI;   //adjustment in II and III quadrant of atan function
+		phi  = atan2(Efield[1], Efield[0]);
 
 		sin2teta = sin(teta)*sin(teta);
 		sin2phi2 = sin(2*phi)*sin(2*phi);

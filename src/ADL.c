@@ -130,7 +130,7 @@ int ADL_Setup(char *filename_setupfile){
 		}
 	} //end parsing file	
 
-	if (GetADLDebug() && ReadVersion != GetADLVersion()) printf("\nWARNING ADL (%.2lf) setup: version (%.2lf) outdated ?\n",GetADLVersion(),ReadVersion);
+	if (GetADLDebug() && ReadVersion != GetADLVersion()) printf("\nWARNING ADL (%.2lf) setup: version (%.2lf) outdated ?\n", (double) GetADLVersion(), (double) ReadVersion);
 	if (GetADLDebug()) ADL_Status();
 	return 1;
 	}

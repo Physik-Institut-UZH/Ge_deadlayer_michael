@@ -78,13 +78,13 @@ int SIMION_Status_GEOMETRY_PLANAR(void){
 	printf("SIMION_G_Dimension       = %i \n",SIMION_Dimension_Planar);
 	printf("SIMION_G_Voltage         = %lf\n",SIMION_Voltage_Planar);
 	printf("---------------------\n");
-	printf("PLANAR_G_BotContactDepth = %ld\n",PLANAR_G_BotContactDepth);
-	printf("PLANAR_G_TopContactDepth = %ld\n",PLANAR_G_TopContactDepth);
-	printf("PLANAR_G_Height          = %ld\n",PLANAR_G_Height);
-	printf("PLANAR_G_Spacing         = %ld\n",PLANAR_G_Spacing);
-	printf("PLANAR_G_ExtGroundWidth  = %ld\n",PLANAR_G_ExtGroundWidth);
-	printf("PLANAR_G_ImpTop          = %lf\n",PLANAR_G_ImpTop);
-	printf("PLANAR_G_ImpBot          = %lf\n",PLANAR_G_ImpBot);
+	printf("PLANAR_G_BotContactDepth = %ld\n", (long int) PLANAR_G_BotContactDepth); // fixed warnings
+	printf("PLANAR_G_TopContactDepth = %ld\n", (long int) PLANAR_G_TopContactDepth);
+	printf("PLANAR_G_Height          = %ld\n", (long int) PLANAR_G_Height);
+	printf("PLANAR_G_Spacing         = %ld\n", (long int) PLANAR_G_Spacing);
+	printf("PLANAR_G_ExtGroundWidth  = %ld\n", (long int) PLANAR_G_ExtGroundWidth);
+	printf("PLANAR_G_ImpTop          = %lf\n", PLANAR_G_ImpTop);
+	printf("PLANAR_G_ImpBot          = %lf\n", PLANAR_G_ImpBot);
 
 	return 0;
 }

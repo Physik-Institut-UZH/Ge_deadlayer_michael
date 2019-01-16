@@ -147,24 +147,24 @@ int SIMION_Status_GEOMETRY_BEGE(void){
 	printf("SIMION_G_Dimension         = %i \n",SIMION_Dimension_Bege);
 	printf("SIMION_G_Voltage           = %lf\n",SIMION_Voltage_Bege);
 	printf("---------------------\n");
-	printf("BEGE_G_Radius              = %ld\n",BEGE_G_Radius);
-	printf("BEGE_G_Height              = %ld\n",BEGE_G_Height);
-	printf("BEGE_G_GrooveDepth         = %ld\n",BEGE_G_GrooveDepth);
-	printf("BEGE_G_GrooveWidth         = %ld\n",BEGE_G_GrooveWidth);
-	printf("BEGE_G_PointContactRadius  = %ld\n",BEGE_G_PointContactRadius);
-	printf("BEGE_G_GrooveInnerRadius   = %ld\n",BEGE_G_GrooveInnerRadius);
-	printf("BEGE_G_PointContactDepth   = %ld\n",BEGE_G_PointContactDepth);
-	printf("BEGE_G_PasLayThickness     = %ld\n",BEGE_G_PasLayThickness);
-	printf("BEGE_G_EdgeRadius          = %ld\n",BEGE_G_EdgeRadius);
-	printf("BEGE_G_EdgeHeight          = %ld\n",BEGE_G_EdgeHeight);
-	printf("BEGE_G_SurfaceContactDepth = %ld\n",BEGE_G_SurfaceContactDepth);
+	printf("BEGE_G_Radius              = %ld\n", (long int) BEGE_G_Radius); // fixed warnings
+	printf("BEGE_G_Height              = %ld\n", (long int) BEGE_G_Height);
+	printf("BEGE_G_GrooveDepth         = %ld\n", (long int) BEGE_G_GrooveDepth);
+	printf("BEGE_G_GrooveWidth         = %ld\n", (long int) BEGE_G_GrooveWidth);
+	printf("BEGE_G_PointContactRadius  = %ld\n", (long int) BEGE_G_PointContactRadius);
+	printf("BEGE_G_GrooveInnerRadius   = %ld\n", (long int) BEGE_G_GrooveInnerRadius);
+	printf("BEGE_G_PointContactDepth   = %ld\n", (long int) BEGE_G_PointContactDepth);
+	printf("BEGE_G_PasLayThickness     = %ld\n", (long int) BEGE_G_PasLayThickness);
+	printf("BEGE_G_EdgeRadius          = %ld\n", (long int) BEGE_G_EdgeRadius);
+	printf("BEGE_G_EdgeHeight          = %ld\n", (long int) BEGE_G_EdgeHeight);
+	printf("BEGE_G_SurfaceContactDepth = %ld\n", (long int) BEGE_G_SurfaceContactDepth);
 	printf("BEGE_G_ImpTop              = %lf\n",BEGE_G_ImpTop);
 	printf("BEGE_G_ImpBot              = %lf\n",BEGE_G_ImpBot);
   printf("BEGE_G_ImpBot              = %lf\n",BEGE_G_ImpBot);
   printf("BEGE_G_ImpIn               = %lf\n",BEGE_G_ImpIn);
 	printf("BEGE_G_Center              = %lf\n",BEGE_G_Center);
-	printf("BEGE_G_Spacing             = %ld\n",BEGE_G_Spacing);
-	printf("BEGE_G_ExtGroundWidth      = %ld\n",BEGE_G_ExtGroundWidth);
+	printf("BEGE_G_Spacing             = %ld\n", (long int) BEGE_G_Spacing);
+	printf("BEGE_G_ExtGroundWidth      = %ld\n", (long int) BEGE_G_ExtGroundWidth);
 	return 0;
 }
 
