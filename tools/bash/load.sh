@@ -13,16 +13,24 @@ then
 fi
 
 echo "ADL4 variables set. Version is: $ADL-4.2"
-export HOST=$(hostname)
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ADL4/lib
-export C_INCLUDE_PATH=$C_INCLUDE_PATH:$ADL4/include
-export CPLUS_INCLUDE_PATH=CPLUS_INCLUDE_PATH:$ADL4/include
-export LIBRARY_PATH=$LIBRARY_PATH:$ADL4/lib
+
+#export HOST=$(hostname)
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ADL4/lib
+#export C_INCLUDE_PATH=$C_INCLUDE_PATH:$ADL4/include
+#export CPLUS_INCLUDE_PATH=CPLUS_INCLUDE_PATH:$ADL4/include
+#export LIBRARY_PATH=$LIBRARY_PATH:$ADL4/lib
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/Applications/adl-4.2/lib
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/Applications/adl-4.2/include
+export CPLUS_INCLUDE_PATH=CPLUS_INCLUDE_PATH:/Applications/adl-4.2/include
+export LIBRARY_PATH=$LIBRARY_PATH:/Applications/adl-4.2/lib
 
 function paPlotter() { python $ADL4/tools/paPlotter/paPlotter.py "$@"; }
+function paPlotterTrace() { python $ADL4/tools/paPlotterTrace/paPlotterTrace.py "$@"; }
 function pulsePlotter() { python $ADL4/tools/pulsePlotter/pulsePlotter.py "$@"; }
 
 export -f paPlotter
+export -f paPlotterTrace
 export -f pulsePlotter
 
 declare -x PS1="\`echo -ne >/dev/tty \"\\033]0;\$USER@\$HOST:\$PWD\\007\"\`$(dirname $ADL4)>> "
