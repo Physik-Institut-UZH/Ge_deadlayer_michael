@@ -261,7 +261,7 @@ int SIMION_G_EField(struct SIMION_PA *pa, int contact){
         else if(geo == Z_CONT)
           pa->Pot[0][SIMION_node(hh,x,y,z)] = 0.0;
         
-        if(geo == BULK || geo == P_LAY){// the contacts are not depleted || geo == V_CONT || geo == Z_CONT){
+        if(geo == BULK){// the contacts are not depleted || geo == V_CONT || geo == Z_CONT){ //the passivation layer is not depleted || geo == P_LAY
           pa->Pot[1][SIMION_node(hh,x,y,z)] = SIMION_G_CalcCharge(x,y,z,contact);
         }
         else pa->Pot[1][SIMION_node(hh,x,y,z)] = 0.0;
