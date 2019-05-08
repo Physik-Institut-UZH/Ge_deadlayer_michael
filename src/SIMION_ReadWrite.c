@@ -151,11 +151,11 @@ static	void SIMION_write_pot_array(double *point, char *filename, struct SIMION_
 
 		if ((ifile = fopen(filename,"wb"))==NULL) printf("\nERROR SIMION WRITE: %s can not be opened\n",filename);
 		else if (GetADLDebug()) printf("Writing %s: ",filename);
-		if (GetADLDebug()) printf("check %d -",fwrite(hh,sizeof(struct SIMION_HEADER),1,ifile));
-		if (GetADLDebug()) printf("symm: x%ld y%ld z%ld, ", (long int) hh->nx, (long int) hh->ny, (long int) hh->nz);
+		printf("check %d -",fwrite(hh,sizeof(struct SIMION_HEADER),1,ifile));
+		printf("symm: x%ld y%ld z%ld, ", (long int) hh->nx, (long int) hh->ny, (long int) hh->nz);
 		fwrite(point,sizeof(double),length,ifile);
 		SIMION_remove_max_voltage(point,hh);
-		if (GetADLDebug()) printf("maxv: %lf\n",hh->max_voltage);
+		printf("maxv: %lf\n",hh->max_voltage);
 		fclose(ifile);
 	}
 

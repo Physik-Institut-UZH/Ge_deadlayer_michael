@@ -117,8 +117,8 @@ int SIMION_Status_SOLVER(void){
 
 int SIMION_G_Solve(struct SIMION_PA *SPA){
 	struct SIMION_HEADER *hh = &(SPA->h);
-	if ((hh->nx >= 3) && (hh->ny == 1) && (hh->nz >= 3)) {printf("\n2D structure will be soved (R,1,Z). \n"); SIMION_Solve2D(SPA);}
-	else if ((hh->nx >= 3)||(hh->ny >=3)||(hh->nz >= 3)) {printf("\n3D structure will be soved (X,Y,Z). \n"); SIMION_Solve3D(SPA);}
+	if ((hh->nx >= 3) && (hh->ny == 1) && (hh->nz >= 3)) {if(GetADLDebug()) printf("\n2D structure will be soved (R,1,Z). \n"); SIMION_Solve2D(SPA);}
+	else if ((hh->nx >= 3)||(hh->ny >=3)||(hh->nz >= 3)) {if(GetADLDebug()) printf("\n3D structure will be soved (X,Y,Z). \n"); SIMION_Solve3D(SPA);}
 	else {printf("\nUnknown pa structure. It won't be solved. \n"); return 1;};
 	return 0;
 }

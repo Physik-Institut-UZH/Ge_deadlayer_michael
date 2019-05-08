@@ -40,6 +40,9 @@ int ADL_Setup(char *filename_setupfile){
 	//remark that this is not true if setup is repeatedly called!!!
 	for (i=0;i<Nlib;i++) sprintf(ADL_G_ACTIVE_LIBRARY[i],"%s","not initialized");
 
+	//GEOMETRY:
+	SetupGeometry(filename_setupfile);
+
 	//get list of keywords from file:
 	if (strlen(filename_setupfile)>1) {// if a filename is supplied, parse it
 		Kwords = ADL_parse_file (filename_setupfile);
@@ -111,15 +114,7 @@ int ADL_Setup(char *filename_setupfile){
 			   sprintf(ADL_G_ACTIVE_LIBRARY [8],"%-20.20s < %-35.35s %d",Kwords[2+i]->keyword,Kwords[2+i]->svalue,SetupTrapping(Kwords[2+i]->keyword,Kwords[2+i]->svalue));
                 if(GetADLDebug()) printf("done \n");
             }
-			//GEOMETRY:
-			if ( (strcmp(Kwords[2+i]->keyword,"SIMION_GEOMETRY_PLANAR")==0)
-			   ||(strcmp(Kwords[2+i]->keyword,"SIMION_GEOMETRY_BEGE")==0)
-               ||(strcmp(Kwords[2+i]->keyword,"SIMION_GEOMETRY_ICOAX")==0)
-                ||(strcmp(Kwords[2+i]->keyword,"SIMION_GEOMETRY_COAX")==0) ){
-                if(GetADLDebug()) printf("\n DEBUG : SETUP ADL GEOMETRY ... ");
-			   sprintf(ADL_G_ACTIVE_LIBRARY [9],"%-20.20s < %-35.35s %d",Kwords[2+i]->keyword,Kwords[2+i]->svalue,SetupGeometry(Kwords[2+i]->keyword,Kwords[2+i]->svalue));
-                if(GetADLDebug()) printf("done \n");
-            }
+			//SOLVER:*
 			if ( (strcmp(Kwords[2+i]->keyword,"SIMION_SOLVER_POISSON")==0)
 			   ||(strcmp(Kwords[2+i]->keyword,"SIMION_SOLVER_LAPLACE")==0)
                 ||(strcmp(Kwords[2+i]->keyword,"SIMION_SOLVER_INHOMOG")==0)){
@@ -130,7 +125,7 @@ int ADL_Setup(char *filename_setupfile){
 		}
 	} //end parsing file	
 
-	if (GetADLDebug() && ReadVersion != GetADLVersion()) printf("\nWARNING ADL (%.2lf) setup: version (%.2lf) outdated ?\n", (double) GetADLVersion(), (double) ReadVersion);
+//	if (GetADLDebug() && ReadVersion != GetADLVersion()) printf("\nWARNING ADL (%.2lf) setup: version (%.2lf) outdated ?\n", (double) GetADLVersion(), (double) ReadVersion);
 	if (GetADLDebug()) ADL_Status();
 	return 1;
 	}

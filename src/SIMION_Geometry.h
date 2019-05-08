@@ -30,7 +30,7 @@ static char* SIMION_Description_Geom;
 void SetVoltage(double);
 double GetVoltage();
 int InitializeGeometry();
-int SetupGeometry(char*,char*);
+int SetupGeometry(char*);
 struct SIMION_PA *GetSIMIONnewPA();
 void GetSIMIONStructure(struct SIMION_PA *,int);
 void GetSIMIONWfield(struct SIMION_PA *,int);
@@ -39,7 +39,7 @@ void GetSIMIONEfield(struct SIMION_PA *,int);
 //GEOMETRY routines
 static int (*SIMION_G_Setup_GEOMETRY)(char *);
 static int (*SIMION_G_Status_GEOMETRY)(void);
-int SIMION_Setup_GEOMETRY(char *,char *);
+int SIMION_Setup_GEOMETRY(char *);
 int SIMION_Status_GEOMETRY(void);
 
 static int (*SIMION_G_CalcPoint)(int,int,int,int);

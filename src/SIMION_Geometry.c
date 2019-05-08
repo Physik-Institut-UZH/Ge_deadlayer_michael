@@ -32,7 +32,7 @@ int InitializeGeometry(){
   return 0;
 }
 
-int SetupGeometry(char *libversion, char *setupfile){return SIMION_Setup_GEOMETRY(libversion,setupfile);}
+int SetupGeometry(char *setupfile){return SIMION_Setup_GEOMETRY(setupfile);}
 
 struct SIMION_PA * GetSIMIONnewPA(){return SIMION_G_newPA();}
 void GetSIMIONStructure(struct SIMION_PA *field,int i){SIMION_G_Structure(field, i);}
@@ -84,47 +84,73 @@ static void SIMION_Set_F_GEOMETRY(char *libversion)
 //++++++++++++++++++++++++++++++++++++++++++
 
 //Here the setup file for this library version:
-int SIMION_Setup_GEOMETRY(char *libversion, char *setupfile){
-  
-  //    InitializeGeometry(SIMION_G_Setup_GEOMETRY,SIMION_G_Status_GEOMETRY,SIMION_G_CalcPoint,SIMION_G_CalcCharge/*,SIMION_G_newPA*/);
-  
+int SIMION_Setup_GEOMETRY(char *setupfile){
+
   InitializeGeometry();
-  
-  if (strcmp(libversion,"SIMION_GEOMETRY_PLANAR")==0) {
-    SIMION_Set_F_GEOMETRY(libversion);
-    SIMION_Voltage_Geom = SIMION_Voltage_Planar;
-    SIMION_EpsExtScale_Geom = SIMION_EpsExtScale_Planar;
-    SIMION_EpsExtScale_Geom = SIMION_EpsScale_Planar;
-    SIMION_Description_Geom = SIMION_Description_Planar;
+
+  char geometry_id[100];
+
+  int    i,len, err=1;
+  struct ADL_KEYWORD **Kwords;
+
+  if (strlen(setupfile)>1) {// if a filename is supplied, parse it
+    Kwords = ADL_parse_file (setupfile);
+
+    //overwrite keywords with parsed values:
+    //first scan for gridsize!
+    len = Kwords[1]->linenumber;
+    err = Kwords[len+2]->linenumber;
+    for (i=0;i<len;i++) {
+      if(strcmp(Kwords[2+i]->keyword,"SIMION_GEOMETRY_PLANAR")==0 ||
+         strcmp(Kwords[2+i]->keyword,"SIMION_GEOMETRY_BEGE")==0   ||
+         strcmp(Kwords[2+i]->keyword,"SIMION_GEOMETRY_COAX")==0   ||
+         strcmp(Kwords[2+i]->keyword,"SIMION_GEOMETRY_ICOAX")==0)  {
+	   sscanf(Kwords[2+i]->keyword,"%s",&geometry_id); break;
+	}
+    }
+  }
+  else{
+       	printf("ERROR: GetLibverion: Wrong setup file '%s' provied. Exit.",setupfile);
+        exit(1);
+  }
+
+  if (strcmp(geometry_id,"SIMION_GEOMETRY_PLANAR")==0) {
+    SIMION_Set_F_GEOMETRY(geometry_id);
     return SIMION_Setup_GEOMETRY_PLANAR(setupfile);
   }
-  if (strcmp(libversion,"SIMION_GEOMETRY_BEGE")==0) {
-    SIMION_Set_F_GEOMETRY(libversion);
-    SIMION_Voltage_Geom = SIMION_Voltage_Bege;
-    SIMION_EpsExtScale_Geom = SIMION_EpsExtScale_Bege;
-    SIMION_EpsExtScale_Geom = SIMION_EpsScale_Bege;
-    SIMION_Description_Geom = SIMION_Description_Bege;
-    return SIMION_Setup_GEOMETRY_BEGE(setupfile);
+  if (strcmp(geometry_id,"SIMION_GEOMETRY_BEGE")==0) {
+    SIMION_Set_F_GEOMETRY(geometry_id);
+    int out = SIMION_Setup_GEOMETRY_BEGE(setupfile);
+    SIMION_Voltage_Geom  = GetBegeVoltage();
+    SIMION_EpsScale_Geom  = GetBegeEpsScale();
+    SIMION_EpsExtScale_Geom  = GetBegeEpsExtScale();
+    SIMION_Description_Geom  = GetBegeDescription();
+    SIMION_Height  = GetBegeHeight();
+    return out;
   }
-  if (strcmp(libversion,"SIMION_GEOMETRY_ICOAX")==0) {
-    SIMION_Set_F_GEOMETRY(libversion);
-    SIMION_Voltage_Geom = SIMION_Voltage_ICoax;
-    SIMION_EpsExtScale_Geom = SIMION_EpsExtScale_ICoax;
-    SIMION_EpsExtScale_Geom = SIMION_EpsScale_ICoax;
-    SIMION_Description_Geom = SIMION_Description_ICoax;
-    return SIMION_Setup_GEOMETRY_ICOAX(setupfile);
+  if (strcmp(geometry_id,"SIMION_GEOMETRY_ICOAX")==0) {
+    SIMION_Set_F_GEOMETRY(geometry_id);
+    int out = SIMION_Setup_GEOMETRY_ICOAX(setupfile);
+    SIMION_Height  = GetICoaxHeight();
+    SIMION_Voltage_Geom  = GetICoaxVoltage();
+    SIMION_EpsScale_Geom  = GetICoaxEpsScale();
+    SIMION_EpsExtScale_Geom  = GetICoaxEpsExtScale();
+    SIMION_Description_Geom  = GetICoaxDescription();
+    return out;
   }
-  if (strcmp(libversion,"SIMION_GEOMETRY_COAX")==0) {
-    SIMION_Set_F_GEOMETRY(libversion);
-    SIMION_Voltage_Geom = SIMION_Voltage_Coax;
-    SIMION_EpsExtScale_Geom = SIMION_EpsExtScale_Coax;
-    SIMION_EpsExtScale_Geom = SIMION_EpsScale_Coax;
-    SIMION_Description_Geom = SIMION_Description_Coax;
-    return SIMION_Setup_GEOMETRY_COAX(setupfile);
+  if (strcmp(geometry_id,"SIMION_GEOMETRY_COAX")==0) {
+    SIMION_Set_F_GEOMETRY(geometry_id);
+    int out = SIMION_Setup_GEOMETRY_COAX(setupfile);
+    SIMION_Voltage_Geom  = GetCoaxVoltage();
+    SIMION_EpsScale_Geom  = GetCoaxEpsScale();
+    SIMION_EpsExtScale_Geom  = GetCoaxEpsExtScale();
+    SIMION_Description_Geom  = GetCoaxDescription();
+    SIMION_Height  = GetCoaxHeight();
+    return out;
   }
   // if you get here, libversion is not recognized:
-  if (SIMION_G_DEBUG) printf("\nERROR: SIMION Setup GEOMETRY - lib %s not recognized\n",libversion);
-  if (SIMION_G_DEBUG) printf("       valid versions are: SIMION_GEOMETRY_PLANAR \n",libversion);
+  if (SIMION_G_DEBUG) printf("\nERROR: SIMION Setup GEOMETRY - lib %s not recognized\n",geometry_id);
+  if (SIMION_G_DEBUG) printf("       valid versions are: SIMION_GEOMETRY_PLANAR \n",geometry_id);
   return 1;
 }
 
@@ -137,41 +163,20 @@ int SIMION_Status_GEOMETRY(void){
   if (SIMION_G_CalcPoint       == SIMION_CalcPoint_PLANAR)       printf("SIMION_G_CalcPoint       -> SIMION_CalcPoint_PLANAR\n");
   if (SIMION_G_CalcCharge      == SIMION_CalcCharge_PLANAR)      printf("SIMION_G_CalcCharge      -> SIMION_CalcCharge_PLANAR\n");
   if (SIMION_G_newPA           == SIMION_newPA_PLANAR)           printf("SIMION_G_newPA           -> SIMION_newPA_PLANAR\n");
-  
-  if (SIMION_G_Setup_GEOMETRY  == SIMION_Setup_GEOMETRY_BEGE){
-    printf("SIMION_G_Setup_GEOMETRY  -> SIMION_Setup_GEOMETRY_BEGE\n");
-    SIMION_Height  = GetBegeHeight();
-    SIMION_Voltage_Geom  = GetBegeVoltage();
-    SIMION_EpsScale_Geom  = GetBegeEpsScale();
-    SIMION_EpsExtScale_Geom  = GetBegeEpsExtScale();
-    SIMION_Description_Geom  = GetBegeDescription();
-  }
+
+  if (SIMION_G_Setup_GEOMETRY  == SIMION_Setup_GEOMETRY_BEGE)  printf("SIMION_G_Setup_GEOMETRY  -> SIMION_Setup_GEOMETRY_BEGE\n");
   if (SIMION_G_Status_GEOMETRY == SIMION_Status_GEOMETRY_BEGE) printf("SIMION_G_Status_GEOMETRY -> SIMION_Status_GEOMETRY_BEGE\n");
   if (SIMION_G_CalcPoint       == SIMION_CalcPoint_BEGE)       printf("SIMION_G_CalcPoint       -> SIMION_CalcPoint_BEGE\n");
   if (SIMION_G_CalcCharge      == SIMION_CalcCharge_BEGE)      printf("SIMION_G_CalcCharge      -> SIMION_CalcCharge_BEGE\n");
   if (SIMION_G_newPA           == SIMION_newPA_BEGE)           printf("SIMION_G_newPA           -> SIMION_newPA_BEGE\n");
-  
-  if (SIMION_G_Setup_GEOMETRY  == SIMION_Setup_GEOMETRY_ICOAX){
-    printf("SIMION_G_Setup_GEOMETRY  -> SIMION_Setup_GEOMETRY_ICOAX\n");
-    SIMION_Height  = GetICoaxHeight();
-    SIMION_Voltage_Geom  = GetICoaxVoltage();
-    SIMION_EpsScale_Geom  = GetICoaxEpsScale();
-    SIMION_EpsExtScale_Geom  = GetICoaxEpsExtScale();
-    SIMION_Description_Geom  = GetICoaxDescription();
-  }
+
+  if (SIMION_G_Setup_GEOMETRY  == SIMION_Setup_GEOMETRY_ICOAX)  printf("SIMION_G_Setup_GEOMETRY  -> SIMION_Setup_GEOMETRY_ICOAX\n");
   if (SIMION_G_Status_GEOMETRY == SIMION_Status_GEOMETRY_ICOAX) printf("SIMION_G_Status_GEOMETRY -> SIMION_Status_GEOMETRY_ICOAX\n");
   if (SIMION_G_CalcPoint       == SIMION_CalcPoint_ICOAX)       printf("SIMION_G_CalcPoint       -> SIMION_CalcPoint_ICOAX\n");
   if (SIMION_G_CalcCharge      == SIMION_CalcCharge_ICOAX)      printf("SIMION_G_CalcCharge      -> SIMION_CalcCharge_ICOAX\n");
   if (SIMION_G_newPA           == SIMION_newPA_ICOAX)           printf("SIMION_G_newPA           -> SIMION_newPA_ICOAX\n");
   
-  if (SIMION_G_Setup_GEOMETRY  == SIMION_Setup_GEOMETRY_COAX){
-    printf("SIMION_G_Setup_GEOMETRY  -> SIMION_Setup_GEOMETRY_COAX\n");
-    SIMION_Height  = GetCoaxHeight();
-    SIMION_Voltage_Geom  = GetCoaxVoltage();
-    SIMION_EpsScale_Geom  = GetCoaxEpsScale();
-    SIMION_EpsExtScale_Geom  = GetCoaxEpsExtScale();
-    SIMION_Description_Geom  = GetCoaxDescription();
-  }
+  if (SIMION_G_Setup_GEOMETRY  == SIMION_Setup_GEOMETRY_COAX)  printf("SIMION_G_Setup_GEOMETRY  -> SIMION_Setup_GEOMETRY_COAX\n");
   if (SIMION_G_Status_GEOMETRY == SIMION_Status_GEOMETRY_COAX) printf("SIMION_G_Status_GEOMETRY -> SIMION_Status_GEOMETRY_COAX\n");
   if (SIMION_G_CalcPoint       == SIMION_CalcPoint_COAX)       printf("SIMION_G_CalcPoint       -> SIMION_CalcPoint_COAX\n");
   if (SIMION_G_CalcCharge      == SIMION_CalcCharge_COAX)      printf("SIMION_G_CalcCharge      -> SIMION_CalcCharge_COAX\n");

@@ -91,9 +91,9 @@ int SIMION_Solve3D_INHOMOG(struct SIMION_PA *SPA)
 	if (!SPA)			{printf("\nERROR in SIMION_Solve3D_INHOMOG : SIMION_PA does not exist. \n"); return 0;}
 	if (SPA->n < 3)		{printf("\nERROR in SIMION_Solve3D_INHOMOG : Expected at least 3 pa's on input. \n"); return 0;}
 	if (SPA->n > 3)		printf("\nWARNING in SIMION_Solve3D_INHOMOG : There are more than 3 pa's on input. \n");
-	pot = SPA->Pot[0];	printf("\n Potential array to refine : %s",SPA->Name[0]);
-	rho = SPA->Pot[1];	printf("\n Space charge array set to : %s",SPA->Name[1]);
-	eps = SPA->Pot[2];  printf("\n Epsilon array set to      : %s",SPA->Name[2]);
+	pot = SPA->Pot[0];	if(GetADLDebug()) printf("\n Potential array to refine : %s",SPA->Name[0]);
+	rho = SPA->Pot[1];	if(GetADLDebug()) printf("\n Space charge array set to : %s",SPA->Name[1]);
+	eps = SPA->Pot[2];      if(GetADLDebug()) printf("\n Epsilon array set to      : %s",SPA->Name[2]);
 	hh = &(SPA->h);
 	geo = SPA->Geo;
 
@@ -110,7 +110,7 @@ int SIMION_Solve3D_INHOMOG(struct SIMION_PA *SPA)
 	SIMION_adapt_geometry(geo,hh);
 	SIMION_adapt_boundaries(pot,hh,geo);
 
-	printf("\n refining ");
+	if(GetADLDebug()) printf("\n refining ");
 
 	while (max_change > GetSIMIONTol())
 	{
@@ -131,24 +131,24 @@ int SIMION_Solve3D_INHOMOG(struct SIMION_PA *SPA)
 		}
 
 		SIMION_adapt_boundaries(pot,hh,geo);
-		
+
 		//update overrelaxation:
 		if (iter <10) max_overrelax = 0.67; else max_overrelax = 0.90;
-		
+
 		//Show some progress:
-		if (max_change < 0.5*last_print_value) {last_print_value = max_change; printf("*"); fflush(stdout);} 
+		if (max_change < 0.5*last_print_value) {last_print_value = max_change; if(GetADLDebug()) printf("*"); fflush(stdout);} 
 		iter ++;
-		
+
 		//Limit maximum number of iterations:
 		//if (iter > 20000) break;
 	}
-	
+
 
 	//Undo scaling:
 	for (i=0;i<length;i++) rho[i] /= RhoScale;
 	SIMION_remove_geometry(geo,hh);
 
-	printf("| refinement completed in %ld iter\n",iter);
+	if(GetADLDebug()) printf("| refinement completed in %ld iter\n",iter);
 	return (int) iter;
 }
 
@@ -166,20 +166,20 @@ int SIMION_Solve2D_INHOMOG(struct SIMION_PA *SPA)
 	double *eps           = NULL;
 	int *geo          = NULL;
 	struct SIMION_HEADER *hh = NULL;
-	
+
 	if (!SPA)			{printf("\nERROR in SIMION_Solve2D_INHOMOG : SIMION_PA does not exist. \n"); return 0;}
 	if (SPA->n < 3)		{printf("\nERROR in SIMION_Solve2D_INHOMOG : Expected at least 3 pa's on input. \n"); return 0;}
 	if (SPA->n > 3)		printf("\nWARNING in SIMION_Solve2D_INHOMOG : There are more than 3 pa's on input. \n");
-	pot = SPA->Pot[0];	printf("\n Potential array to refine : %s",SPA->Name[0]);
-	rho = SPA->Pot[1];	printf("\n Space charge array set to : %s",SPA->Name[1]);
-	eps = SPA->Pot[2];  printf("\n Epsilon array set to      : %s",SPA->Name[2]);
+	pot = SPA->Pot[0];  if(GetADLDebug()) printf("\n Potential array to refine : %s",SPA->Name[0]);
+	rho = SPA->Pot[1];  if(GetADLDebug()) printf("\n Space charge array set to : %s",SPA->Name[1]);
+	eps = SPA->Pot[2];  if(GetADLDebug()) printf("\n Epsilon array set to      : %s",SPA->Name[2]);
 	hh = &(SPA->h);
 	geo = SPA->Geo;
 
 	if ((hh->nx < 3)||(hh->ny != 1)||(hh->nz < 3)) {printf("\nERROR in SIMION_Solve2D_INHOMOG : A 2D structure is expected (R,1,Z). \n"); return 0;}
 
-	long Rdir = 1;							//in r direction 
-	long Zdir = (hh->nx*hh->ny);			//in z direction
+	long Rdir = 1;				//in r direction 
+	long Zdir = (hh->nx*hh->ny);		//in z direction
 	long length = (hh->nx*hh->ny*hh->nz);
 
 	//build the radius correction matrices
@@ -200,7 +200,7 @@ int SIMION_Solve2D_INHOMOG(struct SIMION_PA *SPA)
 	SIMION_adapt_geometry(geo,hh);
 	SIMION_adapt_boundaries(pot,hh,geo);
 
-	printf("\n refining ");
+	if(GetADLDebug()) printf("\n refining ");
 
 	while (max_change > GetSIMIONTol())
 	{
@@ -224,7 +224,7 @@ int SIMION_Solve2D_INHOMOG(struct SIMION_PA *SPA)
 		if (iter <10) max_overrelax = 0.67; else max_overrelax = 0.90;
 
 		//Show some progress:
-		if (max_change < 0.5*last_print_value) {last_print_value = max_change; printf("*"); fflush(stdout);}
+		if (max_change < 0.5*last_print_value) {last_print_value = max_change; if(GetADLDebug()){ printf("*"); fflush(stdout);} }
 		iter ++;
 
 		//Limit maximum number of iterations:
@@ -235,7 +235,7 @@ int SIMION_Solve2D_INHOMOG(struct SIMION_PA *SPA)
 	for (i=0;i<length;i++) rho[i] /= (RhoScale*2.0);
 	SIMION_remove_geometry(geo,hh);
 
-	printf("| refinement completed in %ld iter\n",iter);
+	if(GetADLDebug()) printf("| refinement completed in %ld iter\n",iter);
 
 	return (int) iter;
 }
