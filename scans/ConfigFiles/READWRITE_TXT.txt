@@ -1,0 +1,1 @@
+/lfs/l1/gerda/kermaidy/Analysis/software/src/ADL4/examples/ConfigFiles/READWRITE_TXT.txt
