@@ -89,7 +89,7 @@ for config in configs:
 
           #   print("Set det. config.")
     props = dict(boxstyle='round', facecolor='wheat', alpha=1)
-    config_items = ['Radius','Height','Groove radius','Groove depth','Groove width','Well radius','Well top radius','Well depth','p+ radius','Mass']
+    config_items = ['Radius','Height','Groove radius','Groove depth','Groove width','Well radius','Well top radius','Well depth','p+ radius','Imp. bot','Imp. top','DL','Mass']
     config_values = config.split()[0].split('_')
 
     config_values.append(GetMass(config_values))
@@ -107,8 +107,14 @@ for config in configs:
 
     for iter, (config_item,config_value) in enumerate(zip(config_items,config_values)):
       if(config_item == 'Mass'): config_text += '\n - ' + config_item + ': ' + '%4.0f' % config_value + ' g'
+      elif(config_item == 'Imp. bot' or config_item == 'Imp. top'): 
+	config_value = float(config_value)/10
+	config_text += ' - ' + config_item + ': -' + str(config_value) + ' e10 /cc \n'
+      elif(config_item == 'DL'): 
+	config_value = float(config_value)/10
+	config_text += ' - ' + config_item + ': ' + str(config_value) + ' mm \n'
       else: config_text += ' - ' + config_item + ': ' + str(config_value) + ' mm \n'
-    plt.text(0.1,440,config_text, bbox=props)
+    plt.text(0.15,440,config_text, bbox=props)
 
 #print("Set plot axis")
     plt.xticks(fontsize=15)
