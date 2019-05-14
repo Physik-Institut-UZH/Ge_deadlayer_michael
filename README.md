@@ -31,8 +31,9 @@ example. In the adl4 directory type:
 make
 cd examples/
 make
-./CreatePA ConfigFiles/ICOAX.txt
-./SimulatePulse ConfigFiles/ICOAX.txt
+./CreatePA ConfigFiles/ICOAX.txt          # Return the weighting and Electric potentials
+./DepletionVoltage ConfigFiles/ICOAX.txt  # Return the depletion voltage
+./SimulatePulse ConfigFiles/ICOAX.txt r z # Simulate a pulse a (r,z) location
 
 source ../../tools/bash/load.sh
 
@@ -45,3 +46,21 @@ The same also works for a bege and coaxial detector, by replacing 'ICOAX' with
 'COAX' or 'Bege'.
 
 For a more advanced example: https://github.com/Kermaidy/MaGeToADL.git
+
+*** GEOMETRY SCAN *******************************************************
+
+The detector geometry scan script package is used to find out the optimal
+detector geometry for given Ge crystal properties (radius - height - impurities)
+
+Usage:
+
+cd scans
+
+#Edit Launch_Scans.sh geometry parameter. Each parameter can be a list
+#of values that will be looped over by modifying the ConfigFile given
+#at the top ("file"). The file where detector configuration and depletion
+#voltage are stored is called "DepletionVoltageRecord.txt" - hard-coded
+#is the DepletionVoltage.c routine.
+
+sh Launch_All.sh 1 # The argument allow to remove previous simulation output if '1'
+
