@@ -9,18 +9,30 @@ from matplotlib.colors import LogNorm
 import scipy.interpolate
 import glob
 
-density = 5.54e-3
+density = 5.55e-3
+#density = 5.323e-3
 save    = 1
 fsize   = 18
 
 def GetMass(params):
   
   cylVol  =  math.pi * pow(float(params[0]),2)*float(params[1])
-  wellVol =  math.pi * pow(float(params[6]),2)*float(params[7])
-  grVol   =  math.pi * (pow(float(params[2])+float(params[3]),2)+pow(float(params[2]),2))*float(params[3])
+  wellVol =  math.pi * pow(float(params[5]),2)*float(params[7])
+  wellVol =  math.pi * (pow(float(params[6]),2)-pow(float(params[5]),2))*float(params[7])/2. + wellVol
+  grVol   =  math.pi * (pow(float(params[2])+float(params[3]),2)-pow(float(params[2]),2))*float(params[3])
+  tpVol   =  math.pi * (pow(float(params[0]),2)-pow(float(params[0])-float(params[12]),2))*float(params[13])/2.
 
-  vol     = cylVol-wellVol-grVol
+  vol     = cylVol-wellVol-grVol-tpVol
   mass    = vol*density
+
+  print(" ")
+  print("  Volumes and masses information:")
+  print("    - Cylinder vol. %6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (cylVol,cylVol*density,100*cylVol/cylVol))
+  print("    - Well vol.     %6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (wellVol,wellVol*density,100*wellVol/cylVol))
+  print("    - Groove vol.   0%6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (grVol,grVol*density,100*grVol/cylVol))
+  print("    - Taper vol.    %6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (tpVol,tpVol*density,100*tpVol/cylVol))
+  print("    - Total vol.    %6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (vol,mass,100*vol/cylVol))
+  print(" ")
   
   return mass
 
@@ -30,7 +42,20 @@ def GetMin(E,r):
     if((r[i] < 0.4 or (r[i] > 0.7 and r[i] < 2.5)) and E[i]<min): min = E[i]
   return min
 
+
+print(" ")
+print("Start summarizing minimal E-field scan")
+print(" ")
+
+# Retrieve the scale used to store dimensions in integer format in the file name
+if(len(sys.argv)>1):
+	scale=float(sys.argv[1])
+else:
+	scale=10
+
 depVolfile="DepletionVoltageRecord.txt"
+print(" - Scaling: %f" % scale)
+print(" - Input  : %s" % depVolfile)
 
 try:
   fo = open(depVolfile, "r")
@@ -38,13 +63,13 @@ try:
   fo.close()
 #  configs = np.genfromtxt(depVolfile, autostrip=True)
 except IOError as e:
-  print("Couldn't find the file", depVolfile)
+  print("Couldn't find the file: %s" % depVolfile)
   sys.exit()
 
 print("%s detector configuration found:\r" % len(configs))
 for config in configs:
     if(len(config.split()) != 2): continue
-    print(("  - %s -> DV = %s V \r") % (config.split()[0],config.split()[1]))
+    print("  - %s -> DV = %s V \r" % (config.split()[0],config.split()[1]))
     DV = float(config.split()[1])
     
     Labels = []
@@ -60,9 +85,10 @@ for config in configs:
     plt.figure(1)
     ax = plt.subplot(111)
 
+    print(" ")
     print("  %i input files found \r" % len(SSlist))
     for iter,(label,file) in enumerate(zip(Labels,SSlist)):
-        print("    - ",label,file)
+        print("    - %s --> %s " %(label,file))
 
         R = []
         Z = []
@@ -88,9 +114,11 @@ for config in configs:
         plt.plot(r,e,'-',linewidth=2, label=label + ' - Emin: ' + '%3.0f' % GetMin(e,r) + ' V/cm')
 
           #   print("Set det. config.")
-    props = dict(boxstyle='round', facecolor='wheat', alpha=1)
-    config_items = ['Radius','Height','Groove radius','Groove depth','Groove width','Well radius','Well top radius','Well depth','p+ radius','Imp. bot','Imp. top','DL','Mass']
+    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+    config_items = ['Radius','Height','Groove radius','Groove depth','Groove width','Well radius','Well top radius','Well depth','p+ radius','Imp. bot','Imp. top','DL','Taper radius','Taper height','Mass']
     config_values = config.split()[0].split('_')
+    for entry in range(0,len(config_values)):
+	config_values[entry] = float(config_values[entry]) / scale
 
     config_values.append(GetMass(config_values))
     config_text = 'Detector geometry: \n'
@@ -108,13 +136,15 @@ for config in configs:
     for iter, (config_item,config_value) in enumerate(zip(config_items,config_values)):
       if(config_item == 'Mass'): config_text += '\n - ' + config_item + ': ' + '%4.0f' % config_value + ' g'
       elif(config_item == 'Imp. bot' or config_item == 'Imp. top'): 
-	config_value = float(config_value)/10
-	config_text += ' - ' + config_item + ': -' + str(config_value) + ' e10 /cc \n'
+	config_value = float(config_value)
+	config_text += ' - ' + config_item + ': -' + str(config_value) + ' e9 /cc \n'
       elif(config_item == 'DL'): 
-	config_value = float(config_value)/10
+	config_value = float(config_value)
 	config_text += ' - ' + config_item + ': ' + str(config_value) + ' mm \n'
+      elif((config_item == 'Taper radius' or config_item == 'Taper height') and float(config_value) == 0):
+	config_text = 'None'
       else: config_text += ' - ' + config_item + ': ' + str(config_value) + ' mm \n'
-    plt.text(0.15,440,config_text, bbox=props)
+    plt.text(0.15,230,config_text, bbox=props)
 
 #print("Set plot axis")
     plt.xticks(fontsize=15)

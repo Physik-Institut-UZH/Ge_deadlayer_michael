@@ -6,5 +6,5 @@ list=(ICOAX_Epot*.pa)
 
 for file in ${list[@]}
 do
-	python ../tools/paEpotPlotter/paEpotPlotter.py -f ${file} -g 0.02
+	python ../tools/paEpotPlotter/paEpotPlotter.py -f ${file} -g $1
 done

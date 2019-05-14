@@ -10,8 +10,11 @@ file2=DepletionVoltageRecord.txt
 # DETECTOR GEOMETRY PARAMETERS
 # Units = cm
 
+# Scale for dimension output in integer
+scale=100
+
 # GridSize
-gz=0.02
+gz=$2
 
 # Detector radius
 DR=( 4.00 )
@@ -23,13 +26,13 @@ GW=( 0.30 )
 # Groove depth
 GD=( 0.20 )
 # Groove inner radius
-GR=( 1.0 )
+GR=( 1.0 1.05 )
 
 # Point contact radius
 #PC=( 0.8 1.0 )
 
 # Well depth
-WD=( 5.80 5.90 )
+WD=( 5.90 )
 # Well radius
 WR=( 0.5 )
 # Inner tapering angle
@@ -147,35 +150,38 @@ do
 
 
 		# Tranform 'cm' to 'mm' for keeping precision in file name extension
-		Radius=$(  echo 10 ${dr}  | awk '{printf "%02.0f",$1*$2}' )
-		Height=$(  echo 10 ${dh}  | awk '{printf "%02.0f",$1*$2}' )
+		Radius=$(  echo ${scale} ${dr}  | awk '{printf "%02.0f",$1*$2}' )
+		Height=$(  echo ${scale} ${dh}  | awk '{printf "%02.0f",$1*$2}' )
 
-		DL=$(      echo 100 ${dl}  | awk '{printf "%02.0f",$1*$2}' )
+		DL=$(      echo ${scale} ${dl}  | awk '{printf "%02.0f",$1*$2}' )
 
-		ImpBot=$(  echo 10 ${impbot} | awk '{printf "%02.0f",$1*$2}' )
-		ImpTop=$(  echo 10 ${imptop} | awk '{printf "%02.0f",$1*$2}' )
+		ImpBot=$(  echo ${scale} ${impbot} | awk '{printf "%02.0f",$1*$2}' )
+		ImpTop=$(  echo ${scale} ${imptop} | awk '{printf "%02.0f",$1*$2}' )
 
-		GrooveR=$( echo 10 ${gr}  | awk '{printf "%02.0f",$1*$2}' )
-		GrooveD=$( echo 10 ${gd}  | awk '{printf "%02.0f",$1*$2}' )
-		GrooveW=$( echo 10 ${gw}  | awk '{printf "%02.0f",$1*$2}' )
+		GrooveR=$( echo ${scale} ${gr}  | awk '{printf "%02.0f",$1*$2}' )
+		GrooveD=$( echo ${scale} ${gd}  | awk '{printf "%02.0f",$1*$2}' )
+		GrooveW=$( echo ${scale} ${gw}  | awk '{printf "%02.0f",$1*$2}' )
 
-		WellR=$(   echo 10 ${wr}  | awk '{printf "%02.0f",$1*$2}' )
-		WellRT=$(  echo 10 ${wrt} | awk '{printf "%02.0f",$1*$2}' )
-		WellD=$(   echo 10 ${wd}  | awk '{printf "%02.0f",$1*$2}' )
+		WellR=$(   echo ${scale} ${wr}  | awk '{printf "%02.0f",$1*$2}' )
+		WellRT=$(  echo ${scale} ${wrt} | awk '{printf "%02.0f",$1*$2}' )
+		WellD=$(   echo ${scale} ${wd}  | awk '{printf "%02.0f",$1*$2}' )
 
-		PointC=$(  echo 10 ${gr}  | awk '{printf "%02.0f",$1*$2}' )
+		PointC=$(  echo ${scale} ${gr}  | awk '{printf "%02.0f",$1*$2}' )
+
+		OuterTR=$( echo ${scale} ${otr} | awk '{printf "%02.0f",$1*$2}' )
+		OuterTH=$( echo ${scale} ${oth} | awk '{printf "%02.0f",$1*$2}' )
 
 		if [ $1 == "DV" ];
 		then
-		    mv ./ICOAX_Stru_*_${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}.pa ICOAX_Stru.pa
-       		    mv ./ICOAX_Epot_*_${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}.pa ICOAX_Epot.pa
-		    mv ./ICOAX_Wpot_*_${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}.pa ICOAX_Wpot.pa
+		    mv ./ICOAX_Stru_*_${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}_${OuterTR}_${OuterTH}.pa ICOAX_Stru.pa
+       		    mv ./ICOAX_Epot_*_${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}_${OuterTR}_${OuterTH}.pa ICOAX_Epot.pa
+		    mv ./ICOAX_Wpot_*_${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}_${OuterTR}_${OuterTH}.pa ICOAX_Wpot.pa
 
-		    DepletionVoltage ${file} ${Radius} ${Height} ${GrooveR} ${GrooveD} ${GrooveW} ${WellR} ${WellRT} ${WellD} ${PointC} ${ImpBot} ${ImpTop} ${DL} # Display depletion voltage
+		    DepletionVoltage ${file} ${Radius} ${Height} ${GrooveR} ${GrooveD} ${GrooveW} ${WellR} ${WellRT} ${WellD} ${PointC} ${ImpBot} ${ImpTop} ${DL} ${OuterTR} ${OuterTH} # Display depletion voltage
 		else
        		    if [ $1 == 1 ]
        		    then
-       			VOLT=$( cat ${file2} | grep "${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}" )
+       			VOLT=$( cat ${file2} | grep "${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}_${OuterTR}_${OuterTH}" )
        			volt=$(echo "${VOLT#* }")
        	  		volt=$( echo 500 ${volt} | awk '{printf "%05.0f",$1+$2}' )
 
@@ -186,7 +192,7 @@ do
 
 		    elif [ $1 == 2 ];
 		    then
-			VOLT=$( cat ${file2} | grep "${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}" )
+			VOLT=$( cat ${file2} | grep "${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}_${OuterTR}_${OuterTH}" )
 			volt=$(echo "${VOLT#* }")
 			volt=$( echo 1000 ${volt} | awk '{printf "%05.0f",$1+$2}' )
 
@@ -196,7 +202,7 @@ do
 			sed -i -e "s/${TEXTE1}/${TEXTE2}/" ${file} # change bottom imp. cc. value in file
 		    elif [ $1 == 3 ];
 		    then
-			VOLT=$( cat ${file2} | grep "${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}" )
+			VOLT=$( cat ${file2} | grep "${Radius}_${Height}_${GrooveR}_${GrooveD}_${GrooveW}_${WellR}_${WellRT}_${WellD}_${PointC}_${ImpBot}_${ImpTop}_${DL}_${OuterTR}_${OuterTH}" )
 			volt=$(echo "${VOLT#* }")
 			volt=$( echo 1500 ${volt} | awk '{printf "%05.0f",$1+$2}' )
 
@@ -213,14 +219,14 @@ do
 			sed -i -e "s/${TEXTE1}/${TEXTE2}/" ${file} # change bottom imp. cc. value in file
        		    fi
 
-		    echo ${volt} ${dr} ${dh} ${gr} ${gw} ${gd} ${wr} ${wrt} ${wd} ${pc} ${impbot} ${imptop} ${dl}
+		    echo " --> Configuration: ${volt} ${dr} ${dh} ${gr} ${gw} ${gd} ${wr} ${wrt} ${wd} ${pc} ${impbot} ${imptop} ${dl} ${otr} ${oth}"
 
 		    TEXTE1=$( cat ${file} | grep "SIMION_G_Voltage" )
        		    TEXTE2="SIMION_G_Voltage                 ${volt} ! High voltage"
 
        		    sed -i -e "s/${TEXTE1}/${TEXTE2}/" ${file} # change bottom imp. cc. value in file
 
-		    CreatePA ${file} ${volt} ${Radius} ${Height} ${GrooveR} ${GrooveD} ${GrooveW} ${WellR} ${WellRT} ${WellD} ${PointC} ${ImpBot} ${ImpTop} ${DL} # Create Stru/Wpot/Epot PA files
+		    CreatePA ${file} ${volt} ${Radius} ${Height} ${GrooveR} ${GrooveD} ${GrooveW} ${WellR} ${WellRT} ${WellD} ${PointC} ${ImpBot} ${ImpTop} ${DL} ${OuterTR} ${OuterTH} # Create Stru/Wpot/Epot PA files
 		fi
 #	done
 	done
