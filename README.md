@@ -57,10 +57,11 @@ Usage:
 cd scans
 
 #Edit Launch_Scans.sh geometry parameter. Each parameter can be a list
-#of values that will be looped over by modifying the ConfigFile given
-#at the top ("file"). The file where detector configuration and depletion
-#voltage are stored is called "DepletionVoltageRecord.txt" - hard-coded
-#is the DepletionVoltage.c routine.
+of values that will be looped over by modifying the ConfigFile given
+at the top ("file"). The file where detector configuration and depletion
+voltage are stored is called "DepletionVoltageRecord.txt" - hard-coded
+in the DepletionVoltage.c routine. The output are E-filed maps at various
+bias voltage (DV + 500V/1000V/1500V) and the minimal E-field versus the
+detector radius for the considered bias voltage + a detector geometry summary
 
 sh Launch_All.sh 1 # The argument allow to remove previous simulation output if '1'
-
