@@ -29,6 +29,7 @@ struct ADL_KEYWORD *ADL_new_keyword(void){
 	returnvalue->linenumber = 0;
 	returnvalue->keyword = (char *) calloc(ADL_G_MAXLINELEN+1,sizeof(char));
 	returnvalue->svalue  = (char *) calloc(ADL_G_MAXLINELEN+1,sizeof(char));
+  returnvalue->svalue2 = (char *) calloc(ADL_G_MAXLINELEN+1,sizeof(char));
 	return returnvalue;
 	}
 
@@ -96,7 +97,7 @@ static int ADL_parse_strip(char *line) {
 
 /****************************************************************************/
 /* Parse a line from the setup file											*/
-static int ADL_parse_line ( FILE *fp, char *keyword, char *svalue ) {
+static int ADL_parse_line ( FILE *fp, char *keyword, char *svalue, char *svalue2 ) {
 	//*fp is the pointer to the (opened) setup file, ready to read the next line
 	//returned is a string containing the keyword - the name of the parameter to change
 	//svalue contains the new value (string) the keyword should obtain
@@ -132,7 +133,9 @@ static int ADL_parse_line ( FILE *fp, char *keyword, char *svalue ) {
 		sprintf(keyword,"%s","ERROR");
 	}
 
-    if (status > 2) { // more than 2 strings read: parse error.
+  if(status == 3)
+    sscanf(line,"%s %s %s %s \n",keyword,svalue,svalue2,comment);
+  else if (status > 3) { // more than 2 strings read: parse error.
 		sprintf(comment,"Badly commented?. Try using #,!. keyword = %s svalue = %s",keyword,svalue);
 		sprintf(keyword,"%s","ERROR");
 		sprintf(svalue,"%s",comment);
@@ -186,7 +189,7 @@ struct ADL_KEYWORD **ADL_parse_file (char *filename) {
 			//allocate memory for next keyword:
 			temp = ADL_new_keyword();
 			// read next line of input from file:
-			linenum += ADL_parse_line (fp,temp->keyword,temp->svalue);
+			linenum += ADL_parse_line (fp,temp->keyword,temp->svalue,temp->svalue2);
 
             temp->linenumber = linenum;
 			// break if end of file is detected:
@@ -260,7 +263,7 @@ int ADL_print_keywords(struct ADL_KEYWORD **list) {
 
 	printf("\nKEYWORD LIST:\n");
 	for (i=0;i<len;i++)
-		printf(" %d\t %20s = %s\n",list[i]->linenumber,list[i]->keyword,list[i]->svalue);
+		printf(" %d\t %20s = %s\n",list[i]->linenumber,list[i]->keyword,list[i]->svalue,list[i]->svalue2);
 
 	return len;
 	}

@@ -34,6 +34,7 @@ void InitializeICOAX(){
   
   ICOAX_G_ImpTop               = -1.0;
   ICOAX_G_ImpBot               = -1.0;
+  int k; for(k=0;k<10;k++){ICOAX_G_Imp[0][k]=0.; ICOAX_G_Imp[1][k]=0.;}
   ICOAX_G_ImpIn                = 0.0;
   ICOAX_G_ImpOut               = 0.0;
   ICOAX_G_Center               = 0.0;
@@ -43,7 +44,7 @@ int SIMION_Setup_GEOMETRY_ICOAX(char *filename_setupfile) {
   
   InitializeICOAX();
   InitializeArray(SIMION_GridSize_ICoax,SIMION_Dimension_ICoax,SIMION_Voltage_ICoax,SIMION_EpsScale_ICoax,SIMION_EpsExtScale_ICoax,SIMION_Description_ICoax);
-  int	i,len, err=1;
+  int	i,len, err=1,k;
   double temp=0;
   struct	ADL_KEYWORD **Kwords;
   
@@ -147,6 +148,16 @@ int SIMION_Setup_GEOMETRY_ICOAX(char *filename_setupfile) {
         sscanf(Kwords[2+i]->svalue,"%lf",&ICOAX_G_ImpIn);
       if (strcmp(Kwords[2+i]->keyword,"ICOAX_G_ImpOut")==0)
         sscanf(Kwords[2+i]->svalue,"%lf",&ICOAX_G_ImpOut);
+
+      for(k=0;k<10;k++){
+        char key[50];
+        sprintf(key, "ICOAX_G_Imp%d", k);
+        if (strcmp(Kwords[2+i]->keyword,key)==0){
+          sscanf(Kwords[2+i]->svalue,"%lf",&ICOAX_G_Imp[0][k]);
+          sscanf(Kwords[2+i]->svalue2,"%lf",&ICOAX_G_Imp[1][k]);
+          //printf("%s                = %lf - %lf\n",key,ICOAX_G_Imp[0][k],ICOAX_G_Imp[1][k]);
+        }
+      }
     }
   }
   
@@ -184,6 +195,16 @@ int SIMION_Status_GEOMETRY_ICOAX(void){
   printf("ICOAX_G_ExtGroundWidth      = %i\n",ICOAX_G_ExtGroundWidth);
   printf("ICOAX_G_ImpTop              = %lf\n",ICOAX_G_ImpTop);
   printf("ICOAX_G_ImpBot              = %lf\n",ICOAX_G_ImpBot);
+  printf("ICOAX_G_Imp0                = %lf - %lf\n",ICOAX_G_Imp[0][0],ICOAX_G_Imp[1][0]);
+  printf("ICOAX_G_Imp1                = %lf - %lf\n",ICOAX_G_Imp[0][1],ICOAX_G_Imp[1][1]);
+  printf("ICOAX_G_Imp2                = %lf - %lf\n",ICOAX_G_Imp[0][2],ICOAX_G_Imp[1][2]);
+  printf("ICOAX_G_Imp3                = %lf - %lf\n",ICOAX_G_Imp[0][3],ICOAX_G_Imp[1][3]);
+  printf("ICOAX_G_Imp4                = %lf - %lf\n",ICOAX_G_Imp[0][4],ICOAX_G_Imp[1][4]);
+  printf("ICOAX_G_Imp5                = %lf - %lf\n",ICOAX_G_Imp[0][5],ICOAX_G_Imp[1][5]);
+  printf("ICOAX_G_Imp6                = %lf - %lf\n",ICOAX_G_Imp[0][6],ICOAX_G_Imp[1][6]);
+  printf("ICOAX_G_Imp7                = %lf - %lf\n",ICOAX_G_Imp[0][7],ICOAX_G_Imp[1][7]);
+  printf("ICOAX_G_Imp8                = %lf - %lf\n",ICOAX_G_Imp[0][8],ICOAX_G_Imp[1][8]);
+  printf("ICOAX_G_Imp9                = %lf - %lf\n",ICOAX_G_Imp[0][9],ICOAX_G_Imp[1][9]);
   printf("ICOAX_G_ImpIn               = %lf\n",ICOAX_G_ImpIn);
   printf("ICOAX_G_ImpOut              = %lf\n",ICOAX_G_ImpOut);
   return 0;
@@ -305,6 +326,22 @@ double SIMION_CalcCharge_ICOAX(int nx, int ny, int nz, int i){
   else ICOAX_G_Center = ICOAX_G_Radius + ICOAX_G_Spacing + ICOAX_G_ExtGroundWidth-1.0;
   
   if (SIMION_CalcPoint_ICOAX(nx, ny, nz, i)==P_LAY) return 100;
+  
+  if(ICOAX_G_Imp[0][0] < 0.){
+    int k=0;
+    while(nz > ICOAX_G_Imp[1][k+1]/SIMION_GridSize_ICoax) k++;
+    
+/*
+    if(nx==60) printf("  -> nz = %i [%lf-%lf] imp %lf / %lf \n",
+                      nz,ICOAX_G_Imp[1][k]/SIMION_GridSize_ICoax,ICOAX_G_Imp[1][k+1]/SIMION_GridSize_ICoax,
+                      ICOAX_G_Imp[0][k] + (ICOAX_G_Imp[0][k+1]-ICOAX_G_Imp[0][k])*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing-ICOAX_G_Imp[1][k]/SIMION_GridSize_ICoax) /((ICOAX_G_Imp[1][k+1]-ICOAX_G_Imp[1][k])/SIMION_GridSize_ICoax),
+                      ICOAX_G_ImpBot+(ICOAX_G_ImpTop-ICOAX_G_ImpBot)*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing)/ICOAX_G_Height );
+*/
+    return ICOAX_G_Imp[0][k] + (ICOAX_G_Imp[0][k+1]-ICOAX_G_Imp[0][k])*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing-ICOAX_G_Imp[1][k]/SIMION_GridSize_ICoax)/((ICOAX_G_Imp[1][k+1]-ICOAX_G_Imp[1][k])/SIMION_GridSize_ICoax) +  (ICOAX_G_ImpOut-ICOAX_G_ImpIn)*(nx-double(ICOAX_G_Radius)/2.)/ICOAX_G_Radius;
+    
+    
+  }
+  
   return ICOAX_G_ImpBot+(ICOAX_G_ImpTop-ICOAX_G_ImpBot)*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing)/ICOAX_G_Height + (ICOAX_G_ImpOut-ICOAX_G_ImpIn)*(nx-double(ICOAX_G_Radius)/2.)/ICOAX_G_Radius;
   //    return ICOAX_G_ImpBot+(ICOAX_G_ImpTop-ICOAX_G_ImpBot)*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing)/ICOAX_G_Height;
 }

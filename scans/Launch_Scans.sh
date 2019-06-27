@@ -19,38 +19,36 @@ gz=$2
 # Detector radius
 DR=( 4.00 )
 # Detector height
-DH=( 9.00 )
+DH=( 10.00 )
 
 # Groove width
-GW=( 0.30 )
+GW=( 0.40 )
 # Groove depth
 GD=( 0.20 )
 # Groove inner radius
-GR=( 1.0 1.05 )
+GR=( 1.00 )
 
 # Point contact radius
-#PC=( 0.8 1.0 )
+#PC=( 1.10 )
 
 # Well depth
-WD=( 5.90 )
+WD=( 6.90 )
 # Well radius
-WR=( 0.5 )
+WR=( 0.50 )
 # Inner tapering angle
-TA=( 0 )
+TA=( 0.00 )
 
 # Outer taper radius
-otr=( 0.20 )
+otr=( 0.00 )
 # Outer taper height
-oth=( 3.00 )
+oth=( 2.00 )
 
 # Dead layer thickness
 dl=( 0.1 )
 
-# Impurity concentration
-#declare -a imptop=( 1.20 ) #Full slice
-#declare -a impbot=( 2.00 ) #Full slice
-imptop=( 1.00 )
-impbot=( 1.63 )
+# Impurity concentration - Manufacturer table (start with high imp.)
+impV=( 2.00 1.50 1.00 0.90 0.85 0.85 )
+impZ=( 0.0 1.0 5.0 9.0 11.0 100.0 )
 
 #############################
 
@@ -62,15 +60,11 @@ TEXTE1=$( cat ${file} | grep "ICOAX_G_SurfaceContactDepth" )
 TEXTE2="ICOAX_G_SurfaceContactDepth       ${dl} ! Dead layer thickness"
 sed -i -e "s/${TEXTE1}/${TEXTE2}/" ${file} # change dead layer thickness value in file
 
-#echo "Setting imp. cc. top"
-TEXTE1=$( cat ${file} | grep "ICOAX_G_ImpTop" )
-TEXTE2="ICOAX_G_ImpTop                   -${imptop} ! Top impurity concentration"
-sed -i -e "s/${TEXTE1}/${TEXTE2}/" ${file} # change top imp. cc. value in file
-
-#echo "Setting imp. cc. bot"
-TEXTE1=$( cat ${file} | grep "ICOAX_G_ImpBot" )
-TEXTE2="ICOAX_G_ImpBot                   -${impbot} ! Bottom impurity concentration"
-sed -i -e "s/${TEXTE1}/${TEXTE2}/" ${file} # change bottom imp. cc. value in file
+for index in ${!impV[*]}; do
+  TEXTE1=$( cat ${file} | grep "ICOAX_G_Imp${index}" )
+  TEXTE2="ICOAX_G_Imp${index}           -${impV[$index]} ${impZ[$index]} ! impurity concentration profile"
+  sed -i -e "s/${TEXTE1}/${TEXTE2}/" ${file} # change imp. cc. profile in file
+done
 
 #echo "Setting outer taper radius"
 TEXTE1=$( cat ${file} | grep "ICOAX_G_EdgeRadius" )
@@ -127,8 +121,10 @@ do
 	#echo "Setting tapering angle"
 	for ta in ${TA[@]} #Loop over inner tapering angle
 	do
-		wrt=$( echo ${wd} ${wr} ${theta} | awk '{printf "%01.2f",($1-$2)*sin($3*3.14159/180)/cos($3*3.14159/180)}' )
+		wrt=$( echo ${wd} ${theta} | awk '{printf "%01.2f",$1*sin($2*3.14159/180)/cos($2*3.14159/180)}' )
 		wrt=$( echo ${wrt} ${wr} | awk '{printf "%01.2f",$1+$2}' )
+
+		wrt=$wr
 
 		TEXTE1=$( cat ${file} | grep "ICOAX_G_WellRadiusTop" )
 		TEXTE2="ICOAX_G_WellRadiusTop             ${wrt} ! Top well radius"

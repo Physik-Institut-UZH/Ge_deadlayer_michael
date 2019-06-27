@@ -34,6 +34,9 @@ static double ICOAX_G_ImpTop;
 static double ICOAX_G_ImpBot;
 static double ICOAX_G_ImpIn;
 static double ICOAX_G_ImpOut;
+
+static double ICOAX_G_Imp[2][10];
+
 static double ICOAX_G_Center;
 
 static double SIMION_GridSize_ICoax;

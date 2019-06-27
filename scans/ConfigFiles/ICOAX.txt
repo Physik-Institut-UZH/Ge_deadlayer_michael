@@ -5,30 +5,40 @@
 
 ICOAX_G_PointContactDepth        -0.01 ! smallest value possible (negative value = one gridsize)
 ICOAX_G_PasLayThickness           0.00 ! Passivation layer thickness
-ICOAX_G_SurfaceContactDepth       0.10 ! Dead layer thickness
+ICOAX_G_SurfaceContactDepth       0.1 ! Dead layer thickness
 ICOAX_G_Spacing                   0.00 ! No spacing
 ICOAX_G_ExtGroundWidth            0.00 ! External ground potential (if in a grounded container)
 
 ICOAX_G_ImpIn                     0.00 ! Inner impurity concentration
 ICOAX_G_ImpOut                   -0.00 ! Outer impurity concentration
 
+ICOAX_G_Imp0           -2.00 0.0 ! impurity concentration profile
+ICOAX_G_Imp1           -1.50 1.0 ! impurity concentration profile
+ICOAX_G_Imp2           -1.00 5.0 ! impurity concentration profile
+ICOAX_G_Imp3           -0.90 9.0 ! impurity concentration profile
+ICOAX_G_Imp4           -0.85 11.0 ! impurity concentration profile
+ICOAX_G_Imp5           -0.85 100.0 ! impurity concentration profile
+ICOAX_G_Imp6		0 0 ! impurity profile from manufacturer (10 steps max.)
+ICOAX_G_Imp7		0 0 ! impurity profile from manufacturer (10 steps max.)
+ICOAX_G_Imp8		0 0 ! impurity profile from manufacturer (10 steps max.)
+ICOAX_G_Imp9		0 0 ! impurity profile from manufacturer (10 steps max.)
 
 ##############################################################
 ################ 1.3 kg ICOAX well geometry ###################
-ICOAX_G_ImpTop                   -1.00 ! Top impurity concentration
-ICOAX_G_ImpBot                   -1.50 ! Bottom impurity concentration
-ICOAX_G_GrooveDepth               0.30 ! Depth of the groove
-ICOAX_G_GrooveWidth               0.30 ! Width of the groove
+ICOAX_G_ImpTop                   -0.90 ! Top impurity concentration
+ICOAX_G_ImpBot                   -2.00 ! Bottom impurity concentration
+ICOAX_G_GrooveDepth               0.20 ! Depth of the groove
+ICOAX_G_GrooveWidth               0.40 ! Width of the groove
 ICOAX_G_Radius                    4.00 ! Radius of the crystal
-ICOAX_G_Height                   9.00 ! Heigth of the crystal
-ICOAX_G_PointContactRadius          1.0 ! Point contact radius <= Groove radius
-ICOAX_G_GrooveInnerRadius          1.0 ! usually = POINT_CONTACT_RADIUS
-ICOAX_G_WellDepth                   6.00 ! Well depth
-ICOAX_G_WellRadius               0.5 ! well radius
+ICOAX_G_Height                   10.00 ! Heigth of the crystal
+ICOAX_G_PointContactRadius          1.00 ! Point contact radius <= Groove radius
+ICOAX_G_GrooveInnerRadius          1.00 ! usually = POINT_CONTACT_RADIUS
+ICOAX_G_WellDepth                   6.90 ! Well depth
+ICOAX_G_WellRadius               0.50 ! well radius
 ICOAX_G_WellRadiusTop             0.50 ! Top well radius
 ICOAX_G_WellRounding              0    ! allow spherical well extrusion
-ICOAX_G_EdgeRadius                0.00 ! Radius of the start of the cut
-ICOAX_G_EdgeHeight                4.00 ! Height to which the cut reaches
+ICOAX_G_EdgeRadius                   0.00 !  Radius of the start of the taper
+ICOAX_G_EdgeHeight                   2.00 !  Height of the start of the taper
 ##############################################################
 
 SIMION_G_GridSize                 0.05 ! High voltage
@@ -37,7 +47,7 @@ SIMION_G_EpsExtScale             1.0  ! external permittivity (usually 1=vacuum)
 SIMION_G_Description            ICOAX ! 
 
 SIMION_G_Dimension                  2 ! 2 for 2D 3 for 3D
-SIMION_G_Voltage                 04575 ! High voltage
+SIMION_G_Voltage                 04862 ! High voltage
 
 SIMION_G_RhoScale                 1.0 ! space charge density scale, relative to 10^10/cm^3
 SIMION_G_Tol                    1e-10 ! required tolerance for solution

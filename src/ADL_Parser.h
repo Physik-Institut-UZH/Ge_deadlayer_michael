@@ -26,8 +26,9 @@ int SetupParser(char*,char*);
 struct ADL_KEYWORD {
 	int	linenumber;	// contains the line number (*) at which the keyword was found
 	char *keyword;	// a string containing the keyword read from file
-	char *svalue;	// a string containing the value of the keyword - needs cast from string to int,double,...
-	// (*) exception is the keywords "FILENAME","KEYWORDS" and "ERRORS"
+	char *svalue;	 // a string containing the value of the keyword - needs cast from string to int,double,...
+	char *svalue2; // a string containing a 2nd value of the keyword - needs cast from string to int,double,...
+  // (*) exception is the keywords "FILENAME","KEYWORDS" and "ERRORS"
 	//     for these keywords, the linenumber is replaced with respectively
 	//     the total lenght of the keyword array, the number of keywords found, the number of errors found 
 };
