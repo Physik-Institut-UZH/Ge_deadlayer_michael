@@ -266,9 +266,17 @@ int SIMION_CalcPoint_ICOAX(int nx, int ny, int nz, int i){ // get the radii
     // passivation surface between the groove and the p-contact
     else if(radii < ICOAX_G_GrooveInnerRadius && radii >= ICOAX_G_PointContactRadius && nz <= ICOAX_G_Spacing + ICOAX_G_ExtGroundWidth + ICOAX_G_PasLayThickness) return P_LAY;
     //inner contact (point contact)
-    else if(radii < ICOAX_G_PointContactRadius && nz < ICOAX_G_PointContactDepth + ICOAX_G_Spacing + ICOAX_G_ExtGroundWidth){
-      if (i==0) return V_CONT;
-      else return Z_CONT;
+    else if(radii <= ICOAX_G_PointContactRadius && nz <= ICOAX_G_PointContactDepth + ICOAX_G_Spacing + ICOAX_G_ExtGroundWidth){
+      if(ICOAX_G_PointContactRadius == ICOAX_G_GrooveInnerRadius){
+            if (i==0) return V_CONT;
+            else return Z_CONT;
+      }
+      // dimple-contact rounding
+      else if(radii <= ICOAX_G_PointContactRadius - ICOAX_G_PointContactDepth + sqrt(pow(ICOAX_G_PointContactDepth,2)-pow(nz,2))){
+        if (i==0) return V_CONT;
+        else return Z_CONT;
+      }
+      else return BULK;
     }
     //Point is in the well
     else if(radii <= ICOAX_G_WellRadius + wellEdge + ICOAX_G_SurfaceContactDepth && nz > ICOAX_G_Height - ICOAX_G_WellDepth + ICOAX_G_Spacing + ICOAX_G_ExtGroundWidth - ICOAX_G_SurfaceContactDepth){
@@ -331,17 +339,12 @@ double SIMION_CalcCharge_ICOAX(int nx, int ny, int nz, int i){
     int k=0;
     while(nz > ICOAX_G_Imp[1][k+1]/SIMION_GridSize_ICoax) k++;
     
-/*
-    if(nx==60) printf("  -> nz = %i [%lf-%lf] imp %lf / %lf \n",
-                      nz,ICOAX_G_Imp[1][k]/SIMION_GridSize_ICoax,ICOAX_G_Imp[1][k+1]/SIMION_GridSize_ICoax,
-                      ICOAX_G_Imp[0][k] + (ICOAX_G_Imp[0][k+1]-ICOAX_G_Imp[0][k])*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing-ICOAX_G_Imp[1][k]/SIMION_GridSize_ICoax) /((ICOAX_G_Imp[1][k+1]-ICOAX_G_Imp[1][k])/SIMION_GridSize_ICoax),
-                      ICOAX_G_ImpBot+(ICOAX_G_ImpTop-ICOAX_G_ImpBot)*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing)/ICOAX_G_Height );
-*/
-    return ICOAX_G_Imp[0][k] + (ICOAX_G_Imp[0][k+1]-ICOAX_G_Imp[0][k])*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing-ICOAX_G_Imp[1][k]/SIMION_GridSize_ICoax)/((ICOAX_G_Imp[1][k+1]-ICOAX_G_Imp[1][k])/SIMION_GridSize_ICoax) +  (ICOAX_G_ImpOut-ICOAX_G_ImpIn)*(nx-double(ICOAX_G_Radius)/2.)/ICOAX_G_Radius;
-    
-    
+    return ICOAX_G_Imp[0][k]
+    + (ICOAX_G_Imp[0][k+1]-ICOAX_G_Imp[0][k])
+    * (nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing-ICOAX_G_Imp[1][k]/SIMION_GridSize_ICoax)
+    / ((ICOAX_G_Imp[1][k+1]-ICOAX_G_Imp[1][k])/SIMION_GridSize_ICoax)
+    + (ICOAX_G_ImpOut-ICOAX_G_ImpIn)*(nx-double(ICOAX_G_Radius)/2.)/ICOAX_G_Radius;
   }
   
   return ICOAX_G_ImpBot+(ICOAX_G_ImpTop-ICOAX_G_ImpBot)*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing)/ICOAX_G_Height + (ICOAX_G_ImpOut-ICOAX_G_ImpIn)*(nx-double(ICOAX_G_Radius)/2.)/ICOAX_G_Radius;
-  //    return ICOAX_G_ImpBot+(ICOAX_G_ImpTop-ICOAX_G_ImpBot)*(nz-ICOAX_G_ExtGroundWidth-ICOAX_G_Spacing)/ICOAX_G_Height;
 }
