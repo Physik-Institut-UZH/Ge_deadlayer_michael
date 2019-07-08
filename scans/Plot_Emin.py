@@ -22,8 +22,15 @@ def GetMass(params):
   grVol   =  math.pi * (pow(float(params[2])+float(params[3]),2)-pow(float(params[2]),2))*float(params[3])
   tpVol   =  math.pi * (pow(float(params[0]),2)-pow(float(params[0])-float(params[12]),2))*float(params[13])/2.
 
+  cylDlVol  = math.pi * pow(float(params[0])-float(params[11]),2)*(float(params[1])-2*float(params[11]))
+  wellDlVol = math.pi * pow(float(params[5])+float(params[11]),2)*(float(params[7])+float(params[11]))
+  botDlVol  = math.pi * pow(float(params[2])+float(params[3]),2)*float(params[11])
+
   vol     = cylVol-wellVol-grVol-tpVol
   mass    = vol*density
+
+  actvol  = vol - (cylVol-cylDlVol+botDlVol) - (wellDlVol-wellVol)
+  actmass = actvol*density
 
   print(" ")
   print("  Volumes and masses information:")
@@ -32,6 +39,9 @@ def GetMass(params):
   print("    - Groove vol.   0%6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (grVol,grVol*density,100*grVol/cylVol))
   print("    - Taper vol.    %6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (tpVol,tpVol*density,100*tpVol/cylVol))
   print("    - Total vol.    %6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (vol,mass,100*vol/cylVol))
+  print(" ")
+  print(" Active part:")
+  print("    - Vol.          %6.2f cm3 \t - M = %4.0f g \t - frac. %3.2f " % (actvol,actmass,100*actvol/vol))
   print(" ")
   
   return mass
@@ -133,6 +143,8 @@ for config in configs:
     plt.ylim([0, 1000])
     ax.legend(fontsize=12,loc="upper right")
 
+    taper_set = 0
+
     for iter, (config_item,config_value) in enumerate(zip(config_items,config_values)):
       if(config_item == 'Mass'): config_text += '\n - ' + config_item + ': ' + '%4.0f' % config_value + ' g'
       elif(config_item == 'Imp. bot' or config_item == 'Imp. top'): 
@@ -141,8 +153,9 @@ for config in configs:
       elif(config_item == 'DL'): 
 	config_value = float(config_value)
 	config_text += ' - ' + config_item + ': ' + str(config_value) + ' mm \n'
-      elif((config_item == 'Taper radius' or config_item == 'Taper height') and float(config_value) == 0):
-	config_text = 'None'
+      elif((config_item == 'Taper radius' or config_item == 'Taper height') and (float(config_value) == 0 and taper_set==0)):
+	config_text += 'Outer taper: None\n'
+	taper_set=1
       else: config_text += ' - ' + config_item + ': ' + str(config_value) + ' mm \n'
     plt.text(0.15,230,config_text, bbox=props)
 
